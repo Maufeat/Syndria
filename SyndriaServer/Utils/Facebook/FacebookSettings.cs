@@ -1,0 +1,4 @@
+public static class FacebookSettings
+{
+    public static string AccessToken = "EAAG2aoaArXkBAKNg0FkOa0tM6xmmNj9GhUWU0vsZBWocvZAFUZAREEXJ1LLUFHcPoy3dpzNGOeE63oP3ShA7MmZBZC42NUqP6pQ6sZA0LNUZAtpBku4FzCgitp3aEDXc6d8oo0ZBlFXsr1GhhZBqNQZAr8rctEjluONtfLfsj9mrZB2qAZDZD";
+}
