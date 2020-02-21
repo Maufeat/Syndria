@@ -6,7 +6,7 @@ using UnityEngine;
 public class HeroEditor : EditorWindow
 {
     string heroName;
-    CharType heroType;
+    UnitType heroType;
     Rarity baseRarity;
     Sprite sprite;
     Sprite inventorySprite;
@@ -22,7 +22,7 @@ public class HeroEditor : EditorWindow
     void OnGUI()
     {
         heroName = EditorGUILayout.TextField("Name:", heroName);
-        heroType = (CharType)EditorGUILayout.EnumPopup("Type:", heroType);
+        heroType = (UnitType)EditorGUILayout.EnumPopup("Type:", heroType);
         baseRarity = (Rarity)EditorGUILayout.EnumPopup("Base Rarity: ", baseRarity);
         sprite = (Sprite)EditorGUILayout.ObjectField("Sprite", sprite, typeof(Sprite), false);
         inventorySprite = (Sprite)EditorGUILayout.ObjectField("Inventory Sprite", inventorySprite, typeof(Sprite), false);

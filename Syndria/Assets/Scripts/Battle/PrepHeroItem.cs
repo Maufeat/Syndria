@@ -63,17 +63,8 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
             return;
         var mouseV3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseV3.z = 5;
-        Map map = null;
-        try
-        {
-            map = GameObject.Find("BattleField").GetComponent<Map>();
-        } catch(Exception e)
-        {
-
-        }
-        if(map == null)
-            map = GameObject.Find("TutorialFight").GetComponent<Map>();
-        map.SpawnCharacter(id, map.GetTileByV3(mouseV3), true, this);
-        sprite.SetActive(false);
+        Map map = BattleManager.instance.battleMap;
+        //map.SpawnCharacter(id, map.GetTilePos(mouseV3), true, this);
+        //sprite.SetActive(false);
     }
 }

@@ -4,48 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public enum CharType
-{
-    Rock,
-    Paper,
-    Scissor
-}
-
-public enum Rarity
-{
-    R,
-    SR,
-    SSR
-}
-
-public class CharacterData : MonoBehaviour, IDragHandler, IDropHandler
-{
-    public int ID;
-    public string Name;
-    public CharType Type;
-    public Rarity Rarity;
-    public Stats Stats;
-    public GameObject BattleSprite;
-    public Sprite InventoryIcon;
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        Debug.Log("Drag Character");
-        GetComponent<SpriteRenderer>().sortingOrder = 999;
-        GetComponent<Animator>().SetBool("Grabbed", true);
-        var mouseV3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseV3.y -= 0.5f;
-        mouseV3.z = 5;
-        transform.position = mouseV3;
-    }
-
-    public void OnDrop(PointerEventData eventData)
-    {
-        Debug.Log("Dropping Character");
-    }
-}
-
-public class Character : CharacterData
+public class Character
 {
     public string GUID;
     public int Level;
@@ -63,8 +22,8 @@ public class Character : CharacterData
     public void SetPosition(float x, float y)
     {
         location.Set(x, y);
-        transform.position = new Vector3(location.x * mod3 + mod1, location.y * mod4 + mod2, 5);
-        GetComponent<SpriteRenderer>().sortingOrder = (99 - Convert.ToInt32(location.y));
+        //transform.position = new Vector3(location.x * mod3 + mod1, location.y * mod4 + mod2, 5);
+        //GetComponent<SpriteRenderer>().sortingOrder = (99 - Convert.ToInt32(location.y));
     }
 
     public void Update()

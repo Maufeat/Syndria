@@ -28,7 +28,7 @@ public class ClientSend : MonoBehaviour
         {
             _packet.Write(1);
             _packet.Write(BattleManager.instance.battleMap.GetPrepCharacters().Count);
-            foreach (Character figure in BattleManager.instance.battleMap.GetPrepCharacters())
+            foreach (Hero figure in BattleManager.instance.battleMap.GetPrepCharacters())
             {
                 Debug.Log($"Set Figure ID {figure.ID} to {(int)figure.location.x}/{(int)figure.location.y}");
                 _packet.Write(figure.ID);

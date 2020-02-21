@@ -28,7 +28,7 @@ public class SpellData
     public int ID;
     public string Name;
     public Rarity Rarity;
-    public List<CharType> ableToLearn;
+    public List<UnitType> ableToLearn;
     public int damage;
     public int range;
     public ApplyRange applyRange;

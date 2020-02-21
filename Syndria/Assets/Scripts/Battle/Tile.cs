@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 
 public class Tile
 {
-    private bool _walkable = true;
-    public bool walkable { get { return characterOnTile == null && _walkable; } set { _walkable = value; } }
+    public bool walkable = true;
+
     public bool current = false;
     public bool target = false;
     public bool selectable = false;
@@ -15,7 +15,7 @@ public class Tile
 
     public List<Tile> adjacencyList = new List<Tile>();
 
-    public Character characterOnTile;
+    public AttackableObject objectOnTile;
 
     //BFS 
     public bool visited = false;
@@ -27,16 +27,21 @@ public class Tile
         coordinate = new Vector2Int(x, y);
     }
 
+    public bool isWalkable()
+    {
+        if (!walkable)
+            return false;
+
+        if(objectOnTile != null)
+            if (!objectOnTile.walkable)
+                return false;
+
+        return true;
+    }
+
     void Update()
     {
-        /*if (current)
-            GetComponent<SpriteRenderer>().color = Color.blue;
-        else if (target)
-            GetComponent<SpriteRenderer>().color = Color.green;
-        else if (selectable)
-            GetComponent<SpriteRenderer>().color = Color.red;
-        else
-            GetComponent<SpriteRenderer>().color = Color.white;*/
+
     }
 
     public void Reset()
