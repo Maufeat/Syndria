@@ -10,7 +10,7 @@ public class TileObject : ITileObject
 
     public TeamID Team { get; }
 
-    public Vector2Int location { get; }
+    public Vector2Int location { get; set; }
 
     public bool walkable { get; }
 

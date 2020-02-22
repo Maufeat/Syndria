@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SyndriaServer.Enums;
 
 namespace SyndriaServer.Models
 {
@@ -33,7 +34,7 @@ namespace SyndriaServer.Models
         public int ID;
         public string Name;
         public Rarity Rarity;
-        public List<CharType> ableToLearn;
+        public List<UnitType> ableToLearn;
         public int damage;
         public int range;
         public ApplyRange applyRange;

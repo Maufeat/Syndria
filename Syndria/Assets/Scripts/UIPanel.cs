@@ -13,7 +13,7 @@ public class UIPanel : MonoBehaviour
     private float alpha = 0;
     public float FadeSpeed = 2;
 
-    public virtual void Update()
+    public void Update()
     {
         if (shouldFade)
             FadeAll();

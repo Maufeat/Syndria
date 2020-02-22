@@ -17,7 +17,7 @@ public class Client : MonoBehaviour
     public Player me;
 
     public TCP tcp;
-    private bool isConnected = false;
+    public bool isConnected = false;
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
 

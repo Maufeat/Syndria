@@ -25,10 +25,4 @@ public class Village : UIPanel
             NetworkManager.Instance.client.Send(writer.Data);*/
         });
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

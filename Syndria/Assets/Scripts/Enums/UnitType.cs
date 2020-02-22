@@ -1,6 +1,6 @@
 ﻿public enum UnitType
 {
-    Rock,
+    Rock = 1,
     Paper,
     Scissor
 }

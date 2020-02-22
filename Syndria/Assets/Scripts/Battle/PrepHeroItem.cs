@@ -8,38 +8,51 @@ using UnityEngine.UI;
 public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     public int id = 1;
+
     public GameObject sprite;
     public Image disabledLayer;
-    public bool disabled = false;
+    public HeroData hero;
+
+    public bool canDrag = false;
+    public bool showLevel = false;
+    private bool disabled = false;
 
     void Start()
     {
+        hero = Resources.Load<HeroData>($"Characters/{id}/data");
         sprite = Instantiate(Resources.Load("Prefabs/CharacterPrefab")) as GameObject;
         sprite.GetComponent<SpriteRenderer>().flipX = true;
-        sprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{id}_sprite");
+        sprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{id}/sprite");
         sprite.transform.localScale -= new Vector3(0.5f, 0.5f);
 
         SetupImages();
+
         sprite.SetActive(false);
     }
 
     public void SetupImages()
     {
-        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{id}_thumb");
+        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{id}/thumb");
+        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.Rarity}");
+        transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.Type}");
+        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(hero.Rarity);
+        if (!showLevel)
+            transform.Find("Level").gameObject.SetActive(false);
         disabledLayer = transform.Find("DisableTrigger").GetComponent<Image>();
     }
-
-    public void Update()
+    
+    public void SetDisabled(bool _disabled)
     {
+        disabled = _disabled;
         if (disabled)
-            disabledLayer.color = new Color(0,0,0,0.5f);
+            disabledLayer.color = new Color(0, 0, 0, 0.5f);
         else
             disabledLayer.color = new Color(0, 0, 0, 0);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (disabled)
+        if (disabled || !canDrag)
             return;
         sprite.SetActive(true);
         sprite.GetComponent<SpriteRenderer>().sortingOrder = 999;
@@ -47,24 +60,16 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
         var mouseV3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseV3.y -= 0.5f;
         mouseV3.z = 5;
-        sprite.transform.position =  mouseV3;
-        try
-        {
-            GameObject.Find("DragHighlight").SetActive(false);
-        }catch(Exception e)
-        {
-
-        }
+        sprite.transform.position = mouseV3;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (disabled)
+        if (disabled || !canDrag)
             return;
         var mouseV3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseV3.z = 5;
-        Map map = BattleManager.instance.battleMap;
-        //map.SpawnCharacter(id, map.GetTilePos(mouseV3), true, this);
-        //sprite.SetActive(false);
+        BattleManager.instance.SpawnCharacter(hero, mouseV3, true, this);
+        sprite.SetActive(false);
     }
 }

@@ -14,7 +14,7 @@ public class Player
     public int gold { get; set; }
     public int diamonds { get; set; }
 
-    public List<Character> heroes { get; set; }
+    public List<PlayerHero> heroes { get; set; }
     
     /*public void UpdatePlayerData(LittleEndianReader data)
     {

@@ -8,7 +8,7 @@ public class Map
 {
     public Sprite background;
     
-    private int width = 9, height = 5;
+    public int width = 9, height = 5;
 
     public Tile[,] map;
     public Tilemap tileMap, highlightMap;
@@ -25,7 +25,6 @@ public class Map
     private Vector2Int hightlightedTile;
 
     private List<Vector2Int> _coloredCoordinates = new List<Vector2Int>();
-    private Vector2Int _highlightedCoordinate = new Vector2Int();
     
     public TileBase _battleTile;
     public TileBase _highlightTile;
@@ -36,10 +35,9 @@ public class Map
     void Start()
     {
         _prepObject = GameObject.Find("Battlefield/UI/ActionBar/Preparation");
-
     }
 
-    // Draw Tiles and Set Tilemap;
+    /// <summary>Initializes the Map. Draws Tiles and Set Tilemap.</summary>
     public void Init()
     {
         _battleTile = Resources.Load("Battlefield/tile") as TileBase;
@@ -101,8 +99,11 @@ public class Map
     public void Update()
     {
         Vector3 mousePostition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        // Tile offsets, because else it would look "more" choppy
         mousePostition.x += 0.15f;
         mousePostition.y += 0.1f;
+
         Vector3Int tile = tileMap.WorldToCell(mousePostition);
         Vector2Int destination = new Vector2Int(tile.x, tile.y);
 
@@ -185,42 +186,4 @@ public class Map
         }
         ColorTiles(coords, Color.green);*/
     }
-    
-    /*public void SpawnCharacter(int id, Vector2Int location, bool isAllied, PrepHeroItem prepItem = null)
-    {
-        
-        if (location.x >= 0 && location.x < width && location.y >= 0 && location.y < height)
-        {
-            var instance = Instantiate(Resources.Load("Prefabs/CharacterPrefab")) as GameObject;
-            instance.AddComponent<Character>();
-            instance.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{id}_sprite");
-            instance.transform.localScale -= new Vector3(0.6f, 0.6f);
-
-            Hero character = instance.GetComponent<Hero>();
-
-            if (isAllied)
-            {
-                instance.GetComponent<SpriteRenderer>().flipX = true;
-            }
-            else
-            {
-                //character = Instantiate(ninja.BattleSprite).AddComponent<Character>();
-                //enemyCharacters.Add(character);
-                //character.isPlayerCharacter = false;
-            }
-
-            character.SetPosition(location.x, location.y);
-            map[location.x, location.y].objectOnTile = character;
-            var charPos = character.transform.position;
-            charPos.y += 1.25f;
-
-            if(prepItem != null)
-            {
-                prepItem.disabled = true;
-            }
-
-            //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
-            //healthBar.character = character;
-        }
-    }*/
 }

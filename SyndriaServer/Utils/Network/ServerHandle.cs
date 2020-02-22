@@ -22,15 +22,15 @@ namespace SyndriaServer.Utils.Network
 
             Logger.Write($"[>>][{_fromClient}] Token is {fbToken.IsValid} - Logging in.");
 
-            var player = Server.clients[_fromClient].player;
-            player = new Player();
+            var player = new Player();
             player.fbToken = fbToken;
 
             if (DatabaseManager.getAccountByFacebookId(player))
             {
                 // Send UserData;
+                player.UpdateHeroes();
                 ServerSend.UserData(_fromClient, player);
-                Logger.Write($"[<<][{_fromClient}] Update UserData");
+                Logger.Write($"[<<][{_fromClient}] Update UserData {player.heroes.Count}");
 
                 // Send to Tutorial or Village;
                 if (player.tutorialDone == 0)
@@ -48,17 +48,16 @@ namespace SyndriaServer.Utils.Network
             }
             else
             {
-                var id = GameLogic.fights.Count() + 1;
-                ServerSend.GoToTutorial(_fromClient, id);
-                Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
-                GameLogic.fights.Add(id, new Models.TutorialFight(_fromClient, id));
+                ServerSend.CreateCharacter(_fromClient);
+                Logger.Write($"[<<][{_fromClient}] Send User To Select Character");
             }
+
+            Server.clients[_fromClient].player = player;
 
             if (_fromClient != _clientIdCheck)
             {
                 Logger.Write($"Player (ID: {_fromClient}) has assumed the wrong client ID ({_clientIdCheck})!");
             }
-
 
         }
 
@@ -68,7 +67,7 @@ namespace SyndriaServer.Utils.Network
             int _prepLength = _packet.ReadInt();
             
             var x = GameLogic.fights[_fightId];
-            List<Character> chars = new List<Character>();
+            /*List<Character> chars = new List<Character>();
 
             for(int i = 0; i < _prepLength; i++)
             {
@@ -77,7 +76,25 @@ namespace SyndriaServer.Utils.Network
                 c.location.X = _packet.ReadInt();
                 c.location.Y = _packet.ReadInt();
                 Logger.Write($"Added Character {c.ID} to Location: {c.location.X}/{c.location.Y}");
-            }
+            }*/
+        }
+
+        public static void CreateCharacter(int _fromClient, Packet _packet)
+        {
+            int heroId = _packet.ReadInt();
+            string nickname = _packet.ReadString();
+
+            Logger.Write($"Creating {heroId} with Name: {nickname}");
+            var player = Server.clients[_fromClient].player;
+
+            DatabaseManager.createUser(nickname, player);
+            DatabaseManager.getAccountByFacebookId(player);
+            DatabaseManager.addHeroToPlayer(heroId, player);
+
+            player.UpdateHeroes();
+            ServerSend.UserData(_fromClient, player);
+
+            ServerSend.GoToTutorial(_fromClient, 0);
         }
     }
 }

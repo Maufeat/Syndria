@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Hero : AttackableObject, IAiObject
 {
-    public HeroData heroData { get; }
+    public HeroData heroData { get; set; }
 
     public List<SpellData> spells { get; }
 

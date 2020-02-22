@@ -6,7 +6,7 @@ namespace SyndriaServer.Models
     public class Tile
     {
         private bool _walkable = true;
-        public bool walkable { get { return characterOnTile == null && _walkable; } set { _walkable = value; } }
+        public bool walkable { get { return _walkable; } set { _walkable = value; } }
         public bool current = false;
         public bool target = false;
         public bool selectable = false;
@@ -15,7 +15,7 @@ namespace SyndriaServer.Models
 
         public List<Tile> adjacencyList = new List<Tile>();
 
-        public Character characterOnTile;
+        //public  characterOnTile;
 
         //BFS 
         public bool visited = false;

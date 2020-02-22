@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
   m_Name: data
   m_EditorClassIdentifier: 
-  Aptitude: 0
-  Heatlh: 0
-  AttackRange: 0
-  Movement: 0
+  ID: 3
+  Name: Mitsuki
+  Description: <Mitsuki>No Description
+  Type: 3
+  Rarity: 1
+  Aptitude: 6
+  Heatlh: 55
+  Attack: 17
+  AttackRange: 5
+  Movement: 2

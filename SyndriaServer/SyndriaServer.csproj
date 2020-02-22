@@ -74,8 +74,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\ActionState.cs" />
+    <Compile Include="Enums\Rarity.cs" />
+    <Compile Include="Enums\TeamID.cs" />
+    <Compile Include="Enums\UnitState.cs" />
+    <Compile Include="Enums\UnitType.cs" />
     <Compile Include="GameLogic.cs" />
-    <Compile Include="Models\Character.cs" />
+    <Compile Include="Interface\IAiObject.cs" />
+    <Compile Include="Interface\IAttackableObject.cs" />
+    <Compile Include="Interface\IStat.cs" />
+    <Compile Include="Interface\IStatModifier.cs" />
+    <Compile Include="Interface\IStats.cs" />
+    <Compile Include="Interface\IStatsModifier.cs" />
+    <Compile Include="Interface\ITileObject.cs" />
+    <Compile Include="Models\HeroData.cs" />
+    <Compile Include="Models\PlayerHero.cs" />
     <Compile Include="Models\TutorialFight.cs" />
     <Compile Include="Models\Fight.cs" />
     <Compile Include="Models\SpellData.cs" />

@@ -39,5 +39,17 @@ public class ClientSend : MonoBehaviour
             SendTCPData(_packet);
         }
     }
+
+    public static void SendCreateCharacter(int heroId, string nickname)
+    {
+        using (Packet _packet = new Packet((int)C2S.createCharacter))
+        {
+            _packet.Write(heroId);
+            _packet.Write(nickname);
+
+            SendTCPData(_packet);
+        }
+    }
+
     #endregion
 }

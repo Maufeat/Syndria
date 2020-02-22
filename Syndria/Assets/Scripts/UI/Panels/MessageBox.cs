@@ -35,7 +35,7 @@ public class MessageBox : UIPanel
                 cancelButton.GetComponent<Button>().onClick.AddListener(actionTwo);
             else
                 cancelButton.GetComponent<Button>().onClick.AddListener(delegate { UIManager.instance.ClosePanel(this); });
-        } catch(Exception e) { }
+        } catch(Exception e) { Debug.Log(e.Message); }
         
         boxTxt = GameObject.Find("Context").GetComponent<TMPro.TextMeshProUGUI>();
         boxTxt.text = context;
@@ -65,7 +65,7 @@ public class MessageBox : UIPanel
         actionTwo = action;
     }
 
-    public override void Update()
+    public new void Update()
     {
         base.Update();
     }

@@ -27,8 +27,8 @@ namespace SyndriaServer.Models
         public Tile[,] map;
         public ActionState state;
 
-        public List<Character> teamOneCharacters;
-        public List<Character> teamTwoCharacters;
+        public List<PlayerHero> teamOneCharacters;
+        public List<PlayerHero> teamTwoCharacters;
 
         public TutorialFight(int _id, int _playerId)
         {
@@ -52,14 +52,14 @@ namespace SyndriaServer.Models
             }
         }
 
-        public void SetPrepChars(List<Character> chars)
+        public void SetPrepChars(List<PlayerHero> chars)
         {
-            foreach (var chara in chars)
+            /*foreach (var chara in chars)
             {
                 var tile = map[Convert.ToInt32(chara.location.X), Convert.ToInt32(chara.location.Y)];
                 tile.characterOnTile = chara;
                 Logger.Write($"Set Character on: {tile.coordinate.X} / {tile.coordinate.Y}");
-            }
+            }*/
         }
 
         public void SetPlayers(Client _player)

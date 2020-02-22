@@ -13,6 +13,7 @@
     public enum C2S
     {
         verifyAccessToken = 1,
+        createCharacter,
         setPrepCharacters = 50,
     }
 }

@@ -27,7 +27,23 @@ public class ClientHandle : MonoBehaviour
         Client.instance.me.diamonds = _packet.ReadInt();
         Client.instance.me.dailyCount = _packet.ReadInt();
 
-        Debug.Log($"{ Client.instance.me.Username } Level: { Client.instance.me.level }");
+        Client.instance.me.heroes = new List<PlayerHero>();
+        var heroCount = _packet.ReadInt();
+        for (int i = 0; i < heroCount; i++)
+        {
+            var phId = _packet.ReadInt();
+            var heroId = _packet.ReadInt();
+            PlayerHero p = new PlayerHero()
+            {
+                ID = phId,
+                hero = new Hero(),
+                level = _packet.ReadInt(),
+                xp = _packet.ReadInt(),
+                aptitude = _packet.ReadInt()
+            };
+            p.hero.heroData = Resources.Load<HeroData>($"Characters/{heroId}/data");
+            Client.instance.me.heroes.Add(p);
+        }
     }
 
     public static void CreateCharacter(Packet _packet)

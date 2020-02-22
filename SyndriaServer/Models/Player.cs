@@ -1,4 +1,5 @@
 ﻿using SyndriaServer.Models;
+using SyndriaServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace SyndriaServer
         public int diamonds { get; set; }
         public int tutorialDone { get; set; }
 
-        public List<Character> heroes { get; set; }
+        public List<PlayerHero> heroes { get; set; }
 
         public Player()
         {
@@ -34,6 +35,11 @@ namespace SyndriaServer
 
         public void GetUserData()
         {
+        }
+
+        public void UpdateHeroes()
+        {
+            DatabaseManager.getHeroes(this);
         }
 
         public void OnDataRecieve(byte[] data)

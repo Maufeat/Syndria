@@ -1,6 +1,6 @@
 ﻿public enum Rarity
 {
-    R,
+    R = 1,
     SR,
     SSR,
     UR

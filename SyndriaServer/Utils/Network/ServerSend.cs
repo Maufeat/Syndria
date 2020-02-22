@@ -57,6 +57,16 @@ namespace SyndriaServer.Utils.Network
                 _packet.Write(_player.diamonds);
                 _packet.Write(_player.dailyCount);
 
+                _packet.Write(_player.heroes.Count);
+                foreach(var hero in _player.heroes)
+                {
+                    _packet.Write(hero.ID);
+                    _packet.Write(hero.hero.ID);
+                    _packet.Write(hero.level);
+                    _packet.Write(hero.xp);
+                    _packet.Write(hero.aptitude);
+                }
+
                 SendTCPData(_toClient, _packet);
             }
         }

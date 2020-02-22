@@ -12,3 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
   m_Name: data
   m_EditorClassIdentifier: 
+  ID: 1
+  Name: Boruto
+  Description: <Boruto>No Description
+  Type: 1
+  Rarity: 1
+  Aptitude: 7
+  Heatlh: 52
+  Attack: 15
+  AttackRange: 5
+  Movement: 3

@@ -28,8 +28,8 @@ namespace SyndriaServer.Models
         public Tile[,] map;
         public ActionState state;
 
-        public List<Character> teamOneCharacters;
-        public List<Character> teamTwoCharacters;
+        //public List<Character> teamOneCharacters;
+        //public List<Character> teamTwoCharacters;
 
         public Fight()
         {
