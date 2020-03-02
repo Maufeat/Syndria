@@ -30,10 +30,9 @@ public class Client : MonoBehaviour
     {
         if (isConnected)
         {
-            isConnected = false;
             tcp.socket.Close();
-
             NetworkManager.Instance.Disconnect();
+            isConnected = false;
         }
     }
 
@@ -204,6 +203,7 @@ public class Client : MonoBehaviour
             { (int)S2C.toTutorial, ClientHandle.GoToTutorial},
             { (int)S2C.toVillage, ClientHandle.GoToVillage},
             { (int)S2C.messageBox, ClientHandle.OpenMessageBox},
+            { (int)S2C.changeTurn, ClientHandle.ChangeTurn },
         };
 
         Debug.Log("Initialized packets.");

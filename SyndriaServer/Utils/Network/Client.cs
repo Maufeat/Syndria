@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SyndriaServer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -14,6 +15,8 @@ namespace SyndriaServer.Utils.Network
         public int id;
         public TCP tcp;
         public Player player;
+
+        public TutorialFight currentFight;
 
         public Client(int _clientId)
         {

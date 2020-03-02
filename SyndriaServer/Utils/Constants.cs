@@ -18,7 +18,7 @@ namespace SyndriaServer.Utils
         public const int START_GOLD = 0;
         public const int START_DIAMONDS = 0;
         
-        public const string MYSQL_HOST = "localhost";
+        public const string MYSQL_HOST = "127.0.0.1";
         public const string MYSQL_USER = "root";
         public const string MYSQL_PASS = "123123";
         public const string MYSQL_DB = "game";

@@ -1,4 +1,5 @@
-﻿using SyndriaServer.Utils;
+﻿using SyndriaServer.Enums;
+using SyndriaServer.Utils;
 using SyndriaServer.Utils.Network;
 using System;
 using System.Collections.Generic;
@@ -6,100 +7,83 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace SyndriaServer.Models
 {
     public class TutorialFight
     {
         public int id;
-        private int currentTurn = 0;
-        private int currentTeamTurn = 0;
+        public int currentTurn = 0;
+        public int turnTime = 5;
 
-        public int turnTime = 30;
+        public Map map;
 
-        private DateTime lastTurn;
+        public List<Client> players = new List<Client>();
 
-        private int width = 9, height = 5;
-
-        public Client player;
-
-        public int spectators;
-        public Tile[,] map;
+        public Timer turnTimer;
+        
         public ActionState state;
 
         public List<PlayerHero> teamOneCharacters;
         public List<PlayerHero> teamTwoCharacters;
 
-        public TutorialFight(int _id, int _playerId)
+        public void SetTimer()
+        {
+            turnTimer = new Timer(turnTime * 1000);
+            turnTimer.Elapsed += onTurnPassed;
+            turnTimer.Enabled = true;
+            turnTimer.AutoReset = false;
+        }
+
+        private void onTurnPassed(object sender, ElapsedEventArgs e)
+        {
+            switch (state) {
+                case ActionState.Preparation:
+                    currentTurn++;
+                    state = ActionState.TeamOne;
+                    ServerSend.EndTurn(players);
+                    break;
+                default:
+                    break;
+            }
+            Logger.Write("Timer passed.");
+        }
+
+        public TutorialFight(int _id, int _playerOne, int _playerTwo)
         {
             id = _id;
-            SetPlayers(Server.clients[_playerId]);
-            SetAdjastance();
+
+            players.Add(Server.clients[_playerOne]);
+            players.Add(Server.clients[_playerTwo]);
+            players[0].currentFight = this;
+            players[1].currentFight = this;
+
+            map = new Map();
+            map.SetAdjastance();
             state = ActionState.Preparation;
-            lastTurn = DateTime.Now;
+            SetTimer();
         }
 
-        public void Update()
+        public TutorialFight(int _id, int _playerOne)
         {
-            TimeSpan span = (DateTime.Now - lastTurn);
+            id = _id;
 
-            // 30 Seconds time after each action.
-            if(span.Seconds >= turnTime)
-            {
-                lastTurn = DateTime.Now;
-                ServerSend.OpenMessageBox(player.id, "Turn passed.");
-                Console.WriteLine("Next Turn.");
-            }
+            players.Add(Server.clients[_playerOne]);
+            players[0].currentFight = this;
+
+            map = new Map();
+            map.SetAdjastance();
+            state = ActionState.Preparation;
+            SetTimer();
         }
 
-        public void SetPrepChars(List<PlayerHero> chars)
+        public void SetCharacter(PlayerHero hero)
         {
-            /*foreach (var chara in chars)
-            {
-                var tile = map[Convert.ToInt32(chara.location.X), Convert.ToInt32(chara.location.Y)];
-                tile.characterOnTile = chara;
-                Logger.Write($"Set Character on: {tile.coordinate.X} / {tile.coordinate.Y}");
-            }*/
-        }
+            var tile = map.cells[Convert.ToInt32(hero.location.X), Convert.ToInt32(hero.location.Y)];
+            tile.heroOnTle = hero;
+            Logger.Write($"Set Character on: {tile.coordinate.X} / {tile.coordinate.Y}");
 
-        public void SetPlayers(Client _player)
-        {
-            player = _player;
-            //player.id
-        }
-        
-        public void SetAdjastance()
-        {
-            map = new Tile[width, height];
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    map[x, y] = new Tile(x, y);
-                }
-            }
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (x > 0)
-                    {
-                        map[x, y].adjacencyList.Add(map[x - 1, y]);
-                    }
-                    if (x < width - 1)
-                    {
-                        map[x, y].adjacencyList.Add(map[x + 1, y]);
-                    }
-                    if (y > 0)
-                    {
-                        map[x, y].adjacencyList.Add(map[x, y - 1]);
-                    }
-                    if (y < height - 1)
-                    {
-                        map[x, y].adjacencyList.Add(map[x, y + 1]);
-                    }
-                }
-            }
         }
     }
 }

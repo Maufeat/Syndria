@@ -143,11 +143,6 @@ public class NetworkManager : MonoBehaviour
         }*/
     }
 
-    void OnApplicationQuit()
-    {
-        //me..Disconnect();
-    }
-
     private void OnFBSDKInit()
     {
         if (FB.IsInitialized)

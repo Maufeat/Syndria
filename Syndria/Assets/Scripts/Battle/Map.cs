@@ -10,7 +10,7 @@ public class Map
     
     public int width = 9, height = 5;
 
-    public Tile[,] map;
+    public Tile[,] cells;
     public Tilemap tileMap, highlightMap;
     public ActionState state;
     
@@ -46,14 +46,14 @@ public class Map
         tileMap = GameObject.Find("Stage/Grid/Tilemap").GetComponent<Tilemap>();
         highlightMap = GameObject.Find("Stage/Grid/Highlight").GetComponent<Tilemap>();
 
-        map = new Tile[width, height];
+        cells = new Tile[width, height];
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 Tile newTile = new Tile(x, y);
-                map[x, y] = newTile;
+                cells[x, y] = newTile;
                 SetTile(tileMap, newTile.coordinate, _battleTile);
             }
         }
@@ -64,19 +64,19 @@ public class Map
             {
                 if (x > 0)
                 {
-                    map[x, y].adjacencyList.Add(map[x - 1, y]);
+                    cells[x, y].adjacencyList.Add(cells[x - 1, y]);
                 }
                 if (x < width - 1)
                 {
-                    map[x, y].adjacencyList.Add(map[x + 1, y]);
+                    cells[x, y].adjacencyList.Add(cells[x + 1, y]);
                 }
                 if (y > 0)
                 {
-                    map[x, y].adjacencyList.Add(map[x, y - 1]);
+                    cells[x, y].adjacencyList.Add(cells[x, y - 1]);
                 }
                 if (y < height - 1)
                 {
-                    map[x, y].adjacencyList.Add(map[x, y + 1]);
+                    cells[x, y].adjacencyList.Add(cells[x, y + 1]);
                 }
             }
         }
@@ -86,7 +86,7 @@ public class Map
     public List<TileObject> GetPrepCharacters()
     {
         List<TileObject> list = new List<TileObject>();
-        foreach(var tile in map)
+        foreach(var tile in cells)
         {
             if (tile.objectOnTile == null)
             {
@@ -144,7 +144,7 @@ public class Map
     {
         foreach (Vector2Int coordinate in _coloredCoordinates)
         {
-            tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), Color.white);
+            tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), new Color(0.2f, 0.2f, 0.2f, 0.8f));
         }
         _coloredCoordinates.Clear();
     }

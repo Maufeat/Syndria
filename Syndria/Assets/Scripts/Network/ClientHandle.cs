@@ -71,5 +71,13 @@ public class ClientHandle : MonoBehaviour
     {
         UIManager.instance.OpenMsgBox(_packet.ReadString());
     }
+
+    public static void ChangeTurn(Packet _packet)
+    {
+        if (BattleManager.instance != null)
+        {
+            BattleManager.instance.EndTurn();
+        }
+    }
 }
  

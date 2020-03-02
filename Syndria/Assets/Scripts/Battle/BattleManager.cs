@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
-    private int turn;
+    private int turn = 1;
     public Map battleMap;
     
     public ActionState state;
@@ -34,9 +34,29 @@ public class BattleManager : MonoBehaviour
         ChangeState(ActionState.Preparation);
     }
 
+    public void EndTurn()
+    {
+        if (state == ActionState.Preparation)
+        {
+            GameObject.Find("ActionBar/Preparation").SetActive(false);
+            GameObject.Find("TurnChange").GetComponent<Animator>().Play("TurnChangeText");
+            GameObject.Find("TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
+            turn++;
+            ChangeState(ActionState.TeamOne);
+        }
+        else if(state == ActionState.TeamOne)
+        {
+            ChangeState(ActionState.TeamTwo);
+        }
+        else if(state == ActionState.TeamTwo)
+        {
+            ChangeState(ActionState.TeamTwo);
+        }
+    }
+
     void SetupFakePlayer()
     {
-        var player = new Player();
+        /*var player = new Player();
         player.Username = "Maufeat";
         player.level = 1;
 
@@ -51,7 +71,7 @@ public class BattleManager : MonoBehaviour
             testUnit2
         };
 
-        Client.instance.me = player;
+        Client.instance.me = player;*/
 
     }
 
@@ -81,7 +101,7 @@ public class BattleManager : MonoBehaviour
             unit.player.hero = new Hero();
             unit.player.hero.heroData = id;
             unit.SetPosition(location.x, location.y);
-            battleMap.map[location.x, location.y].objectOnTile = unit.player.hero;
+            battleMap.cells[location.x, location.y].objectOnTile = unit.player.hero;
             var charPos = unit.transform.position;
             charPos.y += 1.25f;
 
@@ -89,6 +109,8 @@ public class BattleManager : MonoBehaviour
             {
                 prepItem.SetDisabled(true);
             }
+
+            ClientSend.SetPrepCharacters(unit.player);
 
             //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
             //healthBar.character = character;
@@ -101,7 +123,7 @@ public class BattleManager : MonoBehaviour
         switch (state)
         {
             case ActionState.Preparation:
-                foreach (var prepTile in battleMap.map)
+                foreach (var prepTile in battleMap.cells)
                 {
                     if (prepTile.coordinate.x < 2)
                     {
@@ -121,12 +143,14 @@ public class BattleManager : MonoBehaviour
         //highlightMap = GameObject.FindGameObjectWithTag("Highlight").GetComponent<Tilemap>();
         //timerText = GameObject.Find("UI/TurnTimer").GetComponent<TMPro.TextMeshProUGUI>();
         GameObject.Find("UI/ActionBar/Preparation/DoneBtn").GetComponent<Button>().onClick.AddListener(delegate {
-            ClientSend.SetPrepCharacters();
+            GameObject.Find("TurnChange").GetComponent<Animator>().Play("TurnChangeText");
+            GameObject.Find("TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
+            turn++;
         });
 
         foreach (var hero in Client.instance.me.heroes)
         {
-            Debug.Log($"Instantiate: { hero.hero.heroData.name }");
+            //Debug.Log($"Instantiate: { hero.hero.heroData.name }");
             var heroListItem = Instantiate(Resources.Load("Prefabs/UI/Misc/HeroListItem"), heroList.transform) as GameObject;
             heroListItem.GetComponent<PrepHeroItem>().id = hero.hero.heroData.ID;
             heroListItem.GetComponent<PrepHeroItem>().hero = hero.hero.heroData;

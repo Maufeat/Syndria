@@ -8,12 +8,13 @@
         toTutorial,
         toVillage,
         messageBox,
+        changeTurn,
     }
 
     public enum C2S
     {
         verifyAccessToken = 1,
         createCharacter,
-        setPrepCharacters = 50,
+        setPrepCharacter = 50,
     }
 }

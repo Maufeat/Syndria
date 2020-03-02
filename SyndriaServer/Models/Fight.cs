@@ -7,14 +7,6 @@ using System.Threading.Tasks;
 
 namespace SyndriaServer.Models
 {
-    public enum ActionState
-    { 
-        Preparation,
-        None,
-        Moving,
-        Attacking,
-        Pending,
-    }
 
     public class Fight
     {
@@ -26,14 +18,14 @@ namespace SyndriaServer.Models
 
         public int spectators;
         public Tile[,] map;
-        public ActionState state;
+        //public ActionState state;
 
         //public List<Character> teamOneCharacters;
         //public List<Character> teamTwoCharacters;
 
         public Fight()
         {
-            state = ActionState.Preparation;
+            //state = ActionState.Preparation;
         }
 
         public void SetPlayers()

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 
 namespace SyndriaServer.Models
 {
@@ -10,5 +11,6 @@ namespace SyndriaServer.Models
         public int aptitude;
         public List<SpellData> spellData;
         public HeroData hero;
+        public Vector2 location;
     }
 }

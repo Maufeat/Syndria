@@ -38,7 +38,7 @@ namespace SyndriaServer.Utils.Network
                     var id = GameLogic.fights.Count() + 1;
                     ServerSend.GoToTutorial(_fromClient, id);
                     Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
-                    GameLogic.fights.Add(id, new Models.TutorialFight(_fromClient, id));
+                    GameLogic.fights.Add(id, new TutorialFight(id, _fromClient));
                 }
                 else
                 {
@@ -61,22 +61,19 @@ namespace SyndriaServer.Utils.Network
 
         }
 
-        public static void SetPrepCharacters(int _fromClient, Packet _packet)
+        public static void SetPrepCharacter(int _fromClient, Packet _packet)
         {
-            int _fightId = _packet.ReadInt();
-            int _prepLength = _packet.ReadInt();
+            int _charId = _packet.ReadInt();
             
-            var x = GameLogic.fights[_fightId];
-            /*List<Character> chars = new List<Character>();
+            var client = Server.clients[_fromClient];
 
-            for(int i = 0; i < _prepLength; i++)
-            {
-                Character c = new Character();
-                c.ID = _packet.ReadInt();
-                c.location.X = _packet.ReadInt();
-                c.location.Y = _packet.ReadInt();
-                Logger.Write($"Added Character {c.ID} to Location: {c.location.X}/{c.location.Y}");
-            }*/
+            var heroToPlace = client.player.heroes.Find(p => p.ID == _charId);
+            heroToPlace.location.X = _packet.ReadInt();
+            heroToPlace.location.Y = _packet.ReadInt();
+
+            client.currentFight.SetCharacter(heroToPlace);
+
+            Logger.Write($"Added Character {heroToPlace.ID} to Location: {heroToPlace.location.X}/{heroToPlace.location.Y}");
         }
 
         public static void CreateCharacter(int _fromClient, Packet _packet)

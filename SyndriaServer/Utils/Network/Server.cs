@@ -61,7 +61,7 @@ namespace SyndriaServer.Utils.Network
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 { (int)C2S.verifyAccessToken, ServerHandle.VerifyAccessToken },
-                { (int)C2S.setPrepCharacters, ServerHandle.SetPrepCharacters },
+                { (int)C2S.setPrepCharacter, ServerHandle.SetPrepCharacter },
                 { (int)C2S.createCharacter, ServerHandle.CreateCharacter }
             };
 

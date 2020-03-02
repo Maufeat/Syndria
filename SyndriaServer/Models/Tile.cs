@@ -15,7 +15,7 @@ namespace SyndriaServer.Models
 
         public List<Tile> adjacencyList = new List<Tile>();
 
-        //public  characterOnTile;
+        public PlayerHero heroOnTle = null;
 
         //BFS 
         public bool visited = false;

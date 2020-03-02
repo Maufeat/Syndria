@@ -3,9 +3,9 @@
     public enum ActionState
     {
         Preparation,
-        None,
-        Moving,
-        Attacking,
-        Pending,
+        TeamOne,
+        TeamTwo,
+        TeamThree,
+        End
     }
 }

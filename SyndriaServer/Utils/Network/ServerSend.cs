@@ -104,5 +104,14 @@ namespace SyndriaServer.Utils.Network
                 SendTCPData(_toClient, _packet);
             }
         }
+
+        public static void EndTurn(List<Client> _toClients)
+        {
+            using (Packet _packet = new Packet((int)S2C.changeTurn))
+            {
+                foreach(var id in _toClients)
+                    SendTCPData(id.id, _packet);
+            }
+        }
     }
 }
