@@ -9,12 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
-  m_Name: data
+  m_Script: {fileID: 11500000, guid: 9984d83b585866442ba26301675ab58a, type: 3}
+  m_Name: stats
   m_EditorClassIdentifier: 
-  ID: 1
-  Name: Boruto
-  Description: <Boruto>No Description
-  Type: 1
-  BaseRarity: 2
-  BaseStats: {fileID: 0}
+  Attack: 5
+  Defense: 0
+  HP: 0
+  PierceRate: 0
+  Resistance: 0
+  Regeneration: 0
+  CritChance: 0
+  CritDamage: 0
+  CritResistance: 0
+  CritDefense: 0
+  RecoveryRate: 0
+  Lifesteal: 0

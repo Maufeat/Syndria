@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class BattleManager : MonoBehaviour
 {
     private int turn = 1;
+    float turnTimeLeft = 5.0f;
+
     public Map battleMap;
     
     public ActionState state;
@@ -14,6 +16,8 @@ public class BattleManager : MonoBehaviour
     public static BattleManager instance;
 
     public GameObject heroList;
+
+    public TMPro.TextMeshProUGUI timerText;
 
     private void Awake()
     {
@@ -141,7 +145,7 @@ public class BattleManager : MonoBehaviour
     {
         //tileMap = GameObject.FindGameObjectWithTag("Tilemap").GetComponent<Tilemap>();
         //highlightMap = GameObject.FindGameObjectWithTag("Highlight").GetComponent<Tilemap>();
-        //timerText = GameObject.Find("UI/TurnTimer").GetComponent<TMPro.TextMeshProUGUI>();
+        timerText = GameObject.Find("UI/Header/Turn/TurnTimer").GetComponent<TMPro.TextMeshProUGUI>();
         GameObject.Find("UI/ActionBar/Preparation/DoneBtn").GetComponent<Button>().onClick.AddListener(delegate {
             GameObject.Find("TurnChange").GetComponent<Animator>().Play("TurnChangeText");
             GameObject.Find("TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
@@ -160,6 +164,9 @@ public class BattleManager : MonoBehaviour
     
     void Update()
     {
+        turnTimeLeft -= Time.deltaTime;
+        timerText.text = Mathf.Round(turnTimeLeft).ToString();
+
         battleMap.Update();
     }
 }

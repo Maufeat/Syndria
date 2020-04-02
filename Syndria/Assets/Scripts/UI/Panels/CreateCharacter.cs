@@ -69,10 +69,10 @@ public class CreateCharacter : UIPanel
     {
         selectedCharacter = data.ID;
         charRenderer.sprite = Resources.Load<Sprite>($"Characters/{data.ID}/sprite");
-        statsHP.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.Heatlh.ToString();
-        statsAttack.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.Attack.ToString();
-        statsRange.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.AttackRange.ToString();
-        statsMovement.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.Movement.ToString();
+        //statsHP.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.Heatlh.ToString();
+        //statsAttack.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.Attack.ToString();
+        //statsRange.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.AttackRange.ToString();
+        //statsMovement.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = data.Movement.ToString();
         particleSystems.Play();
     }
 

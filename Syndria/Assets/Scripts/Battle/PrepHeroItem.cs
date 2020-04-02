@@ -33,9 +33,9 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
     public void SetupImages()
     {
         transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{id}/thumb");
-        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.Rarity}");
+        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.BaseRarity}");
         transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.Type}");
-        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(hero.Rarity);
+        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(hero.BaseRarity);
         if (!showLevel)
             transform.Find("Level").gameObject.SetActive(false);
         disabledLayer = transform.Find("DisableTrigger").GetComponent<Image>();

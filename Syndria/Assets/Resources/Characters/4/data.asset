@@ -16,9 +16,5 @@ MonoBehaviour:
   Name: Meytei
   Description: No
   Type: 2
-  Rarity: 2
-  Aptitude: 6
-  Heatlh: 6
-  Attack: 6
-  AttackRange: 6
-  Movement: 6
+  BaseRarity: 4
+  BaseStats: {fileID: 0}
