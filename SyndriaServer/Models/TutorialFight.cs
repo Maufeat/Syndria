@@ -50,6 +50,17 @@ namespace SyndriaServer.Models
             Logger.Write("Timer passed.");
         }
 
+        public void changeClientState(Client client, bool readyState)
+        {
+            client.readyState = readyState;
+            bool allReady = true;
+            foreach (var _c in players)
+                if (_c.readyState == false)
+                    allReady = false;
+            if(allReady && state == ActionState.Preparation)
+                ServerSend.EndTurn(players);
+        }
+
         public TutorialFight(int _id, int _playerOne, int _playerTwo)
         {
             id = _id;

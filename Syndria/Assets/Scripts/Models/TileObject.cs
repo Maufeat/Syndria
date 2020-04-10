@@ -2,11 +2,7 @@
 
 public class TileObject : ITileObject
 {
-    public int ID { get; }
-
-    public string Name { get; }
-
-    public string Description { get; }
+    public int ID { get; set; }
 
     public TeamID Team { get; }
 

@@ -56,6 +56,7 @@ public class NetworkManager : MonoBehaviour
 
         UIManager.instance.CloseAllPanel(true);
         UIManager.instance.CloseLoadingBox();
+        UIManager.instance.OpenMsgBox("Disconnected.");
         UIManager.instance.uiLogin.SetActive(true);
 
         Debug.Log("Disconnected");

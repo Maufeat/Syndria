@@ -22,15 +22,15 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void SetPrepCharacters(PlayerHero hero)
+    public static void SetPrepCharacters(Hero hero)
     {
         using (Packet _packet = new Packet((int)C2S.setPrepCharacter))
         {
-            _packet.Write(22);
-            _packet.Write(hero.hero.location.x);
-            _packet.Write(hero.hero.location.y);
+            _packet.Write(hero.ID);
+            _packet.Write(hero.location.x);
+            _packet.Write(hero.location.y);
 
-            Debug.Log($"Set Figure ID {22} to {hero.hero.location.x}/{hero.hero.location.y}");
+            Debug.Log($"Set Figure ID {hero.ID} to {hero.location.x}/{hero.location.y}");
 
             SendTCPData(_packet);
         }

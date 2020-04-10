@@ -16,5 +16,6 @@
         verifyAccessToken = 1,
         createCharacter,
         setPrepCharacter = 50,
+        changeReadyState,
     }
 }

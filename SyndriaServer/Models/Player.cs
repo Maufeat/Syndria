@@ -37,9 +37,9 @@ namespace SyndriaServer
         {
         }
 
-        public void UpdateHeroes()
+        public bool UpdateHeroes()
         {
-            DatabaseManager.getHeroes(this);
+            return DatabaseManager.getHeroes(this);
         }
 
         public void OnDataRecieve(byte[] data)

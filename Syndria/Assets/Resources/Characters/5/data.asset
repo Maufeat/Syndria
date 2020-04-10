@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
   m_Name: data
   m_EditorClassIdentifier: 
-  ID: 3
-  Name: Mitsuki
-  Description: <Mitsuki>No Description
-  Type: 3
-  BaseRarity: 3
+  ID: 5
+  Name: Test
+  Description: No
+  Type: 2
+  BaseRarity: 4
   BaseStats: {fileID: 0}

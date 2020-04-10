@@ -16,9 +16,5 @@ MonoBehaviour:
   Name: Sarada
   Description: <Sarada>No Description
   Type: 2
-  Rarity: 1
-  Aptitude: 8
-  Heatlh: 55
-  Attack: 12
-  AttackRange: 4
-  Movement: 3
+  BaseRarity: 2
+  BaseStats: {fileID: 0}

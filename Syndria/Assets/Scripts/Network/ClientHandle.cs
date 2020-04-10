@@ -36,12 +36,11 @@ public class ClientHandle : MonoBehaviour
             PlayerHero p = new PlayerHero()
             {
                 ID = phId,
-                hero = new Hero(),
                 level = _packet.ReadInt(),
                 xp = _packet.ReadInt(),
                 aptitude = _packet.ReadInt()
             };
-            p.hero.heroData = Resources.Load<HeroData>($"Characters/{heroId}/data");
+            p.baseHeroData = Resources.Load<HeroData>($"Characters/{heroId}/data");
             Client.instance.me.heroes.Add(p);
         }
     }

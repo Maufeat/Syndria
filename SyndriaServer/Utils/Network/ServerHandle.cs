@@ -28,22 +28,28 @@ namespace SyndriaServer.Utils.Network
             if (DatabaseManager.getAccountByFacebookId(player))
             {
                 // Send UserData;
-                player.UpdateHeroes();
-                ServerSend.UserData(_fromClient, player);
-                Logger.Write($"[<<][{_fromClient}] Update UserData {player.heroes.Count}");
+                if (player.UpdateHeroes())
+                {
+                    ServerSend.UserData(_fromClient, player);
+                    Logger.Write($"[<<][{_fromClient}] Update UserData {player.heroes.Count}");
 
-                // Send to Tutorial or Village;
-                if (player.tutorialDone == 0)
+                    // Send to Tutorial or Village;
+                    if (player.tutorialDone == 0)
+                    {
+                        var id = GameLogic.fights.Count() + 1;
+                        ServerSend.GoToTutorial(_fromClient, id);
+                        Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
+                        GameLogic.fights.Add(id, new TutorialFight(id, _fromClient));
+                    }
+                    else
+                    {
+                        ServerSend.GoToVillage(_fromClient);
+                        Logger.Write($"[<<][{_fromClient}] Send User To Village");
+                    }
+                } else
                 {
-                    var id = GameLogic.fights.Count() + 1;
-                    ServerSend.GoToTutorial(_fromClient, id);
-                    Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
-                    GameLogic.fights.Add(id, new TutorialFight(id, _fromClient));
-                }
-                else
-                {
-                    ServerSend.GoToVillage(_fromClient);
-                    Logger.Write($"[<<][{_fromClient}] Send User To Village");
+                    ServerSend.CreateCharacter(_fromClient);
+                    Logger.Write($"[<<][{_fromClient}] Send User To Select Character");
                 }
             }
             else
@@ -76,6 +82,17 @@ namespace SyndriaServer.Utils.Network
             Logger.Write($"Added Character {heroToPlace.ID} to Location: {heroToPlace.location.X}/{heroToPlace.location.Y}");
         }
 
+        public static void ChangeReadyState(int _fromClient, Packet _packet)
+        {
+            var client = Server.clients[_fromClient];
+            if(client.currentFight == null)
+                return;
+
+            int _state = _packet.ReadInt();
+
+            client.currentFight.changeClientState(client, (_state == 0) ? false : true);
+        }
+
         public static void CreateCharacter(int _fromClient, Packet _packet)
         {
             int heroId = _packet.ReadInt();
@@ -91,7 +108,9 @@ namespace SyndriaServer.Utils.Network
             player.UpdateHeroes();
             ServerSend.UserData(_fromClient, player);
 
-            ServerSend.GoToTutorial(_fromClient, 0);
+            var id = GameLogic.fights.Count() + 1;
+            ServerSend.GoToTutorial(_fromClient, id);
+            GameLogic.fights.Add(id, new TutorialFight(id, _fromClient));
         }
     }
 }

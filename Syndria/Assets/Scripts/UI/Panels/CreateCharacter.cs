@@ -41,28 +41,43 @@ public class CreateCharacter : UIPanel
 
         });
         inputField = GameObject.Find("NameInput").GetComponent<TMPro.TMP_InputField>();
-        
+
+        var prepOne = charOne.GetComponentInChildren<PrepHeroItem>();
+        prepOne.hero = new PlayerHero();
+        prepOne.hero.baseHeroData = Resources.Load<HeroData>("Characters/1/data");
         charOne.GetComponent<Button>().onClick.AddListener(delegate
         {
             charOne.GetComponent<Image>().color = new Color(0, 0, 0, 1f);
             charTwo.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
             charThree.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
-            ChangeCharacter(charOne.GetComponentInChildren<PrepHeroItem>().hero);
+            ChangeCharacter(prepOne.hero.baseHeroData);
         });
+
+        var prepTwo = charTwo.GetComponentInChildren<PrepHeroItem>();
+        prepTwo.hero = new PlayerHero();
+        prepTwo.hero.baseHeroData = Resources.Load<HeroData>("Characters/2/data");
         charTwo.GetComponent<Button>().onClick.AddListener(delegate
         {
             charOne.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
             charTwo.GetComponent<Image>().color = new Color(0, 0, 0, 1f);
             charThree.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
-            ChangeCharacter(charTwo.GetComponentInChildren<PrepHeroItem>().hero);
+            ChangeCharacter(prepTwo.hero.baseHeroData);
         });
+
+        var prepThree = charThree.GetComponentInChildren<PrepHeroItem>();
+        prepThree.hero = new PlayerHero();
+        prepThree.hero.baseHeroData = Resources.Load<HeroData>("Characters/3/data");
         charThree.GetComponent<Button>().onClick.AddListener(delegate
         {
             charOne.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
             charTwo.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
             charThree.GetComponent<Image>().color = new Color(0, 0, 0, 1f);
-            ChangeCharacter(charThree.GetComponentInChildren<PrepHeroItem>().hero);
+            ChangeCharacter(prepThree.hero.baseHeroData);
         });
+
+        charOne.GetComponentInChildren<PrepHeroItem>().SetupImages();
+        charTwo.GetComponentInChildren<PrepHeroItem>().SetupImages();
+        charThree.GetComponentInChildren<PrepHeroItem>().SetupImages();
     }
 
     void ChangeCharacter(HeroData data)

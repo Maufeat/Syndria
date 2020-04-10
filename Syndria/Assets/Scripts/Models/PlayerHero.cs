@@ -7,6 +7,6 @@ public class PlayerHero
     public int level;
     public int xp;
     public int aptitude;
+    public HeroData baseHeroData;
     public List<SpellData> spellData;
-    public Hero hero;
 }

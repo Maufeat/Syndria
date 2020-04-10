@@ -16,5 +16,5 @@ MonoBehaviour:
   Name: Boruto
   Description: <Boruto>No Description
   Type: 1
-  BaseRarity: 2
+  BaseRarity: 1
   BaseStats: {fileID: 0}

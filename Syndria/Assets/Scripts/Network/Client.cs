@@ -30,9 +30,9 @@ public class Client : MonoBehaviour
     {
         if (isConnected)
         {
+            isConnected = false;
             tcp.socket.Close();
             NetworkManager.Instance.Disconnect();
-            isConnected = false;
         }
     }
 

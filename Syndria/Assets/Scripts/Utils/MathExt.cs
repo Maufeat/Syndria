@@ -15,7 +15,7 @@ public static class MathExt
             case Rarity.R:
                 return Color.grey;
             case Rarity.SR:
-                return new Color(255, 184, 0);
+                return new Color(1.0f, 0.7f, 0);
             case Rarity.SSR:
                 return Color.blue;
             case Rarity.UR:

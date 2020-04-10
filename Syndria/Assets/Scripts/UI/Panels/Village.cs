@@ -17,12 +17,10 @@ public class Village : UIPanel
 
         //var discordBtn = GameObject.Find("DiscordBtn").GetComponent<Button>();
         //discordBtn.GetComponent<Button>().onClick.AddListener(delegate { StaticTestScript.OpenDiscordUrl(); });
-
-        var fightBtn = GameObject.Find("FightBtn").GetComponent<Button>();
+        
+        var fightBtn = GameObject.Find("Button (2)").GetComponent<Button>();
         fightBtn.GetComponent<Button>().onClick.AddListener(delegate {
-            /*LittleEndianWriter writer = new LittleEndianWriter();
-            writer.WriteShort((short)PacketCmd.C2S_StartTutorial);
-            NetworkManager.Instance.client.Send(writer.Data);*/
+            UIManager.instance.OpenPanel("UIHeroes");
         });
     }
 }
