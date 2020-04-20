@@ -73,9 +73,9 @@ public class ClientHandle : MonoBehaviour
 
     public static void ChangeTurn(Packet _packet)
     {
-        if (BattleManager.instance != null)
+        if (BattleManager.Instance != null)
         {
-            BattleManager.instance.EndTurn();
+            BattleManager.Instance.EndTurn();
         }
     }
 }

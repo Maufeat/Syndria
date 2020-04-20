@@ -4,7 +4,7 @@ public interface ITileObject
 {
     int ID { get; }
     TeamID Team { get; }
-    Vector2Int location{ get; }
+    Vector2 location{ get; }
     bool walkable { get; }
     GameObject renderObject { get; }
 

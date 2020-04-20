@@ -90,7 +90,6 @@
     <Compile Include="Models\HeroData.cs" />
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\PlayerHero.cs" />
-    <Compile Include="Models\TutorialFight.cs" />
     <Compile Include="Models\Fight.cs" />
     <Compile Include="Models\SpellData.cs" />
     <Compile Include="Models\Tile.cs" />

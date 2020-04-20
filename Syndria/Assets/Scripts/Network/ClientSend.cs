@@ -27,8 +27,8 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)C2S.setPrepCharacter))
         {
             _packet.Write(hero.ID);
-            _packet.Write(hero.location.x);
-            _packet.Write(hero.location.y);
+            _packet.Write((int)hero.location.x);
+            _packet.Write((int)hero.location.y);
 
             Debug.Log($"Set Figure ID {hero.ID} to {hero.location.x}/{hero.location.y}");
 
@@ -43,6 +43,15 @@ public class ClientSend : MonoBehaviour
             _packet.Write(heroId);
             _packet.Write(nickname);
 
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void ChangeReadyState(bool ready)
+    {
+        using (Packet _packet = new Packet((int)C2S.changeReadyState))
+        {
+            _packet.Write(ready);
             SendTCPData(_packet);
         }
     }

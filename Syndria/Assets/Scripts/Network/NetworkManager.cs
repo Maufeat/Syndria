@@ -178,7 +178,7 @@ public class NetworkManager : MonoBehaviour
     {
         if (_LoginResponse.Error != null)
         {
-            FacebookLog("Failed To LOG IN", false, true, false);
+            FacebookLog("Failed to connect to facebook...", false, true, false);
             Debug.Log(_LoginResponse.Error);
         }
         else

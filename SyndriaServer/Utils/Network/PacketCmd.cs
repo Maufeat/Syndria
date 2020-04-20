@@ -9,6 +9,7 @@
         toVillage,
         messageBox,
         changeTurn,
+        changeReadyState,
     }
 
     public enum C2S

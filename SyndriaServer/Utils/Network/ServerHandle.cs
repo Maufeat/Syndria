@@ -39,7 +39,7 @@ namespace SyndriaServer.Utils.Network
                         var id = GameLogic.fights.Count() + 1;
                         ServerSend.GoToTutorial(_fromClient, id);
                         Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
-                        GameLogic.fights.Add(id, new TutorialFight(id, _fromClient));
+                        GameLogic.fights.Add(id, new Fight(id, _fromClient));
                     }
                     else
                     {
@@ -88,9 +88,11 @@ namespace SyndriaServer.Utils.Network
             if(client.currentFight == null)
                 return;
 
-            int _state = _packet.ReadInt();
+            bool _state = _packet.ReadBool();
 
-            client.currentFight.changeClientState(client, (_state == 0) ? false : true);
+            client.currentFight.changeClientState(client, _state);
+
+            Logger.Write("Client changed ready state: " + _state.ToString());
         }
 
         public static void CreateCharacter(int _fromClient, Packet _packet)
@@ -110,7 +112,7 @@ namespace SyndriaServer.Utils.Network
 
             var id = GameLogic.fights.Count() + 1;
             ServerSend.GoToTutorial(_fromClient, id);
-            GameLogic.fights.Add(id, new TutorialFight(id, _fromClient));
+            GameLogic.fights.Add(id, new Fight(id, _fromClient));
         }
     }
 }

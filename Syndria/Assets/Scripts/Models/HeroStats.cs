@@ -6,6 +6,7 @@ public class HeroStats : ScriptableObject
     public int Attack;
     public int Defense;
     public int HP;
+    public int Movement;
     public int PierceRate;
     public int Resistance;
     public int Regeneration;

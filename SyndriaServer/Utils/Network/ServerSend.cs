@@ -113,5 +113,14 @@ namespace SyndriaServer.Utils.Network
                     SendTCPData(id.id, _packet);
             }
         }
+
+        public static void ChangeReadyState(Client client, bool ready)
+        {
+            using (Packet _packet = new Packet((int)S2C.changeReadyState))
+            {
+                _packet.Write(ready);
+                SendTCPData(client.id, _packet);
+            }
+        }
     }
 }

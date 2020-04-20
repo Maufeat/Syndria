@@ -17,4 +17,4 @@ MonoBehaviour:
   Description: No
   Type: 2
   BaseRarity: 4
-  BaseStats: {fileID: 0}
+  BaseStats: {fileID: 11400000, guid: 68675e3eed6ae324bbd1603e8ea9e0e1, type: 2}

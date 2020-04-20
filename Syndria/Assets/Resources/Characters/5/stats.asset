@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984d83b585866442ba26301675ab58a, type: 3}
+  m_Name: stats
+  m_EditorClassIdentifier: 
+  Attack: 5
+  Defense: 5
+  HP: 5
+  Movement: 5
+  PierceRate: 5
+  Resistance: 5
+  Regeneration: 55
+  CritChance: 5
+  CritDamage: 5
+  CritResistance: 5
+  CritDefense: 0
+  RecoveryRate: 5
+  Lifesteal: 5

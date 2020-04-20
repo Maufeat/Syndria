@@ -6,7 +6,7 @@ namespace SyndriaServer
 {
     public class GameLogic
     {
-        public static Dictionary<int, TutorialFight> fights = new Dictionary<int, TutorialFight>();
+        public static Dictionary<int, Fight> fights = new Dictionary<int, Fight>();
 
         public static void Update()
         {

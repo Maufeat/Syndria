@@ -1,39 +1,47 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
     private int turn = 1;
-    float turnTimeLeft = 5.0f;
+    float turnTimeLeft = 10.0f;
+    bool turnTimerWarningPlayd = false;
 
     public Map battleMap;
+    public TeamID myTeam = TeamID.BLUE;
     
     public ActionState state;
-    
-    public static BattleManager instance;
+
+    public bool ready = false;
+      
+    public static BattleManager Instance;
 
     public GameObject heroList;
     public GameObject actionBar;
     public GameObject prepBar;
 
+    public Color greeny = new Color32(0x1C, 0xA4, 0x00, 0xFF);
+
     public TMPro.TextMeshProUGUI timerText;
+
+    public FieldHero selectedHero = null;
+    public TileObjState currentState = TileObjState.None;
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
         else { Destroy(gameObject); }
     }
     
     void Start()
     {
-        if (!Client.instance.isConnected)
-            SetupFakePlayer();
         battleMap = new Map();
         battleMap.Init();
         Setup();
@@ -52,39 +60,17 @@ public class BattleManager : MonoBehaviour
             GameObject.Find("UI/TurnChange").GetComponent<Animator>().Play("TurnChangeText");
             GameObject.Find("UI/TurnChange/TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
             turn++;
-            ChangeState(ActionState.TeamOne);
+            ChangeState(ActionState.TeamBlue);
         }
-        else if(state == ActionState.TeamOne)
+        else if(state == ActionState.TeamBlue)
         {
-            ChangeState(ActionState.TeamTwo);
+            ChangeState(ActionState.TeamRed);
         }
-        else if(state == ActionState.TeamTwo)
+        else if(state == ActionState.TeamRed)
         {
-            ChangeState(ActionState.TeamTwo);
+            ChangeState(ActionState.TeamRed);
         }
     }
-
-    void SetupFakePlayer()
-    {
-        var player = new Player();
-        player.Username = "Maufeat";
-        player.level = 1;
-
-        /*var testUnit = new PlayerHero();
-        var testUnit2 = new PlayerHero();
-        testUnit.hero.heroData = Resources.Load<HeroData>("Characters/2/data");
-        testUnit2.hero.heroData = Resources.Load<HeroData>("Characters/3/data");
-
-        player.heroes = new List<PlayerHero>()
-        {
-            testUnit,
-            testUnit2
-        };*/
-
-        Client.instance.me = player;
-
-    }
-
 
     public void SpawnCharacter(PlayerHero hero, Vector3 mouse, bool isAllied, PrepHeroItem prepItem = null)
     {
@@ -118,6 +104,11 @@ public class BattleManager : MonoBehaviour
                 prepItem.SetDisabled(true);
             }
 
+            if (isAllied)
+                battleMap.units[TeamID.BLUE].Add(unit);
+            else
+                battleMap.units[TeamID.RED].Add(unit);
+
             ClientSend.SetPrepCharacters(unit.player);
 
             //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
@@ -135,7 +126,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (prepTile.coordinate.x < 2)
                     {
-                        battleMap.ColorTile(prepTile.coordinate, new Color32(0x1C, 0xA4, 0x00, 0xFF));
+                        battleMap.ColorTile(prepTile.coordinate, greeny);
                     }
                 }
                 break;
@@ -149,9 +140,8 @@ public class BattleManager : MonoBehaviour
     {
         timerText = GameObject.Find("UI/Header/Turn/TurnTimer").GetComponent<TMPro.TextMeshProUGUI>();
         GameObject.Find("UI/ActionBar/Preparation/DoneBtn").GetComponent<Button>().onClick.AddListener(delegate {
-            GameObject.Find("TurnChange").GetComponent<Animator>().Play("TurnChangeText");
-            GameObject.Find("TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
-            turn++;
+            ready = !ready;
+            ClientSend.ChangeReadyState(ready);
         });
 
         foreach (var hero in Client.instance.me.heroes)
@@ -160,14 +150,108 @@ public class BattleManager : MonoBehaviour
             heroListItem.GetComponent<PrepHeroItem>().hero = hero;
             heroListItem.GetComponent<PrepHeroItem>().canDrag = true;
         }
+        
+        AudioManager.Instance.PlayMusicWithCrossFade(Resources.Load<AudioClip>("Sounds/BGM/bgm_endlessstorm"));
     }
     
     void Update()
     {
         turnTimeLeft -= Time.deltaTime;
-        if(turnTimeLeft >= 0)
-            timerText.text = Mathf.Round(turnTimeLeft).ToString();
 
+        if (turnTimeLeft >= 0)
+        {
+            timerText.text = Mathf.Round(turnTimeLeft).ToString();
+            if (turnTimeLeft <= 3.5f && !turnTimerWarningPlayd)
+            {
+                turnTimerWarningPlayd = true;
+                AudioManager.Instance.PlaySFX(Resources.Load<AudioClip>("Sounds/SFX/3210_countdown"));
+            }
+        } else
+        {
+            turnTimerWarningPlayd = false;
+        }
+        
         battleMap.Update();
+
+        clickEvent();
+        idk();
+    }
+
+    void idk()
+    {
+        if (selectedHero == null)
+        {
+            actionBar.SetActive(false);
+        }
+        else
+        {
+            actionBar.SetActive(true);
+            actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.player.playerHero;
+            actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.player.heroData.Name;
+        }
+    }
+
+    void clickEvent()
+    {
+        var mousePos = battleMap.GetTilePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        if (Input.GetMouseButtonDown(0) && mousePos.x >= 0 && mousePos.x < battleMap.width && mousePos.y < battleMap.height && mousePos.y >= 0 && currentState != TileObjState.Pending)
+        {
+            switch (state)
+            {
+                case ActionState.TeamBlue:
+                    if (selectedHero != null)
+                    {
+                        if (!selectedHero.player.location.Equals(mousePos))
+                        {
+                            if (currentState == TileObjState.Moving)
+                            {
+                                if (battleMap._coloredCoordinates.Contains(mousePos))
+                                {
+                                    selectedHero.Move(mousePos.x, mousePos.y);
+                                    battleMap.ClearColor();
+                                    return;
+                                }
+                                else
+                                {
+                                    currentState = TileObjState.None;
+                                }
+                            }
+                            else if (currentState == TileObjState.Attacking)
+                            {
+                                if (battleMap._coloredCoordinates.Contains(mousePos))
+                                {
+                                    //characterSelected.GetComponent<Animation>().Play("attack");
+                                    //selectedHero.characterAttack.Attack(characterSelected, tile.x, tile.y);
+                                    //_battle.CheckGame();
+                                }
+                                else
+                                {
+                                    currentState = TileObjState.None;
+                                }
+                                //TODO: Remove it when attack animation are created
+                                currentState = TileObjState.None;
+                            }
+                            battleMap.ClearColor();
+                            selectedHero = null;
+                            actionBar.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        if (selectedHero == null && battleMap.cells[mousePos.x, mousePos.y].objectOnTile != null)
+                        {
+                            var objOnTile = battleMap.cells[mousePos.x, mousePos.y].objectOnTile;
+                            if (objOnTile.GetType() == typeof(Hero))
+                            {
+                                if (objOnTile.Team == TeamID.BLUE && currentState == TileObjState.None)
+                                {
+                                    battleMap.units[TeamID.BLUE].Where(hero => hero.player == objOnTile).First().WantToMove();
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
     }
 }

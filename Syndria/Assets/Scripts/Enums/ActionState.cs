@@ -1,13 +1,13 @@
 ﻿public enum ActionState
 {
     Preparation,
-    TeamOne,
-    TeamTwo,
-    TeamThree,
+    TeamBlue,
+    TeamRed,
+    TeamNeutral,
     End
 }
 
-public enum HeroState
+public enum TileObjState
 {
     None,
     Moving,

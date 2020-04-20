@@ -8,6 +8,7 @@ public enum S2C
     toVillage,
     messageBox,
     changeTurn,
+    changeReadyState,
 }
 
 public enum C2S
@@ -15,4 +16,5 @@ public enum C2S
     verifyAccessToken = 1,
     createCharacter,
     setPrepCharacter = 50,
+    changeReadyState
 }

@@ -12,19 +12,14 @@ public class Map
 
     public Tile[,] cells;
     public Tilemap tileMap, highlightMap;
-    public ActionState state;
     
-    public List<Character> alliedCharacters;
-    public List<Character> enemyCharacters;
+    public Dictionary<TeamID, List<FieldHero>> units = new Dictionary<TeamID, List<FieldHero>>();
 
     public List<PrepHeroItem> availableHeroes;
-
-    private Character selectedCharacter;
-    private SpellData selectedSpell;
     
     private Vector2Int hightlightedTile;
 
-    private List<Vector2Int> _coloredCoordinates = new List<Vector2Int>();
+    public List<Vector2Int> _coloredCoordinates = new List<Vector2Int>();
     
     public TileBase _battleTile;
     public TileBase _highlightTile;
@@ -45,6 +40,13 @@ public class Map
 
         tileMap = GameObject.Find("Stage/Grid/Tilemap").GetComponent<Tilemap>();
         highlightMap = GameObject.Find("Stage/Grid/Highlight").GetComponent<Tilemap>();
+
+        units = new Dictionary<TeamID, List<FieldHero>>
+        {
+            { TeamID.BLUE, new List<FieldHero>() },
+            { TeamID.RED, new List<FieldHero>() },
+            { TeamID.NEUTRAL, new List<FieldHero>() },
+        };
 
         cells = new Tile[width, height];
 
@@ -83,6 +85,33 @@ public class Map
         //StartTimer(30);
     }
 
+    public void ResetVisited()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                cells[x, y].visited = false;
+                cells[x, y].parent = null;
+            }
+        }
+    }
+
+    public Tile GetTileByCoordinate(Vector2 coordinate)
+    {
+        return cells[(int)coordinate.x, (int)coordinate.y];
+    }
+
+    public void AddUnit(AttackableObject character, Vector2Int position)
+    {
+        cells[position.x, position.y].objectOnTile = character;
+    }
+
+    public void RemoveUnit(Vector2 position)
+    {
+        cells[(int)position.x, (int)position.y].objectOnTile = null;
+    }
+
     public List<TileObject> GetPrepCharacters()
     {
         List<TileObject> list = new List<TileObject>();
@@ -95,7 +124,7 @@ public class Map
         }
         return list;
     }
-    
+
     public void Update()
     {
         Vector3 mousePostition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -167,18 +196,18 @@ public class Map
     public Vector2Int GetTilePos(Vector3 input)
     {
         Vector3 mousePostition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePostition.x += 0.15f;
+        mousePostition.y += 0.1f;
         Vector3Int tile = tileMap.WorldToCell(mousePostition);
         return new Vector2Int(tile.x, tile.y);
     }
 
     #endregion
 
-    public void WantToMove(Character character)
+    public void WantToMove(Hero character)
     {
-        /*ClearColor();
-        state = MapState.Moving;
-        characterSelected = character;
-        var adTiles = character.characterMovement.GetWalkableTiles(characterSelected, character.ninja.Stats.MovementRange);
+        /*ÜClearColor();
+        var adTiles = .GetWalkableTiles(characterSelected, character.ninja.Stats.MovementRange);
         var coords = new List<Vector2Int>();
         foreach (Tile tile in adTiles)
         {
