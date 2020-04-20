@@ -204,6 +204,7 @@ public class Client : MonoBehaviour
             { (int)S2C.toVillage, ClientHandle.GoToVillage},
             { (int)S2C.messageBox, ClientHandle.OpenMessageBox},
             { (int)S2C.changeTurn, ClientHandle.ChangeTurn },
+            { (int)S2C.changeReadyState, ClientHandle.ChangeTurn },
         };
 
         Debug.Log("Initialized packets.");

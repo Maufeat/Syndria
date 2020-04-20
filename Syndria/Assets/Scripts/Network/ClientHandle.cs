@@ -78,5 +78,14 @@ public class ClientHandle : MonoBehaviour
             BattleManager.Instance.EndTurn();
         }
     }
+
+    public static void ChangeReadyState(Packet _packet)
+    {
+        if (BattleManager.Instance != null)
+        {
+            var ready = _packet.ReadBool();
+            BattleManager.Instance.EndTurn();
+        }
+    }
 }
  

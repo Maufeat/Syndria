@@ -17,6 +17,7 @@ public class BattleManager : MonoBehaviour
     public ActionState state;
 
     public bool ready = false;
+    public bool enemyReady = false;
       
     public static BattleManager Instance;
 
@@ -70,6 +71,11 @@ public class BattleManager : MonoBehaviour
         {
             ChangeState(ActionState.TeamRed);
         }
+    }
+    
+    public void ChangeReadyState(bool ready)
+    {
+        enemyReady = ready;
     }
 
     public void SpawnCharacter(PlayerHero hero, Vector3 mouse, bool isAllied, PrepHeroItem prepItem = null)
