@@ -19,10 +19,11 @@ public class FieldHero : MonoBehaviour
     public Stack<Vector3> totalWaypoints;
     public Vector3 target;
     public float moveSpeed = 5f;
-
-    private Material blurMaterial;
+    
     private float blurAmount = 0;
     private bool blurActive;
+
+    private Material material;
 
     public void SetPosition(float x, float y)
     {
@@ -33,22 +34,21 @@ public class FieldHero : MonoBehaviour
 
     public void Start()
     {
-        blurMaterial = Resources.Load<Material>("Materials/2DBlur");
-        GetComponent<SpriteRenderer>().material = blurMaterial;
+        GetComponent<SpriteRenderer>().material = Instantiate(GetComponent<SpriteRenderer>().material);
     }
 
     public void Update()
     {
         if(hasAttacked && hasMoved && BattleManager.Instance.state == ActionState.TeamBlue)
         {
-            blurMaterial.SetInt("_IsGray", 0);
+            GetComponent<SpriteRenderer>().material.SetInt("_IsGray", 0);
         } else
         {
-            blurMaterial.SetInt("_IsGray", 1);
+            GetComponent<SpriteRenderer>().material.SetInt("_IsGray", 1);
         }
 
         blurAmount = Mathf.Clamp(blurAmount, 0f, 1.5f);
-        blurMaterial.SetFloat("_BlurAmount", blurAmount);
+        GetComponent<SpriteRenderer>().material.SetFloat("_BlurAmount", blurAmount);
         if (blurActive)
         {
             blurAmount += 25f * Time.deltaTime;
@@ -133,6 +133,12 @@ public class FieldHero : MonoBehaviour
         BattleManager.Instance.battleMap.ColorTiles(coords, BattleManager.Instance.greeny);
     }
 
+    public void Select()
+    {
+        BattleManager.Instance.battleMap.ClearColor();
+        BattleManager.Instance.selectedHero = this;
+    }
+
     public List<Tile> GetWalkableTiles(int distance)
     {
         Queue<Tile> open = new Queue<Tile>();
@@ -154,7 +160,7 @@ public class FieldHero : MonoBehaviour
             {
                 foreach (Tile neighbourTile in tile.adjacencyList)
                 {
-                    if (!neighbourTile.visited && neighbourTile.walkable)
+                    if (!neighbourTile.visited && neighbourTile.isWalkable())
                     {
                         neighbourTile.distance = tile.distance + 1;
                         neighbourTile.parent = tile;

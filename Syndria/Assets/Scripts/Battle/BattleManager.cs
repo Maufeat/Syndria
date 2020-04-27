@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class BattleManager : MonoBehaviour
 {
     private int turn = 1;
-    float turnTimeLeft = 10.0f;
+    float turnTimeLeft = 30.0f;
     bool turnTimerWarningPlayd = false;
 
     public Map battleMap;
@@ -50,6 +50,17 @@ public class BattleManager : MonoBehaviour
         prepBar = GameObject.Find("ActionBar/Preparation");
         actionBar = GameObject.Find("ActionBar/ActionBar");
         actionBar.SetActive(false);
+
+        var pounchingball = new PlayerHero()
+        {
+            ID = 9000,
+            baseHeroData = Resources.Load<HeroData>("Characters/9000/data"),
+            level = 1,
+            aptitude = 0,
+            xp = 0
+        };
+
+        SpawnCharacter(pounchingball, new Vector2Int(8, 2), false);
     }
 
     public void EndTurn()
@@ -57,6 +68,7 @@ public class BattleManager : MonoBehaviour
         if (state == ActionState.Preparation)
         {
             prepBar.SetActive(false);
+            HideReadyText();
             actionBar.SetActive(true);
             GameObject.Find("UI/TurnChange").GetComponent<Animator>().Play("TurnChangeText");
             GameObject.Find("UI/TurnChange/TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
@@ -75,6 +87,7 @@ public class BattleManager : MonoBehaviour
     
     public void ChangeReadyState(bool ready)
     {
+        ChangeReadyText("Two");
         enemyReady = ready;
     }
 
@@ -83,7 +96,11 @@ public class BattleManager : MonoBehaviour
         var location = battleMap.GetTilePos(mouse);
         if (location.x >= 0 && location.x < battleMap.width && location.y >= 0 && location.y < battleMap.height)
         {
-            var instance = Instantiate(Resources.Load("Prefabs/CharacterPrefab")) as GameObject;
+            GameObject instance;
+            if (hero.baseHeroData.overwriteGameObject != null)
+                instance = Instantiate(hero.baseHeroData.overwriteGameObject) as GameObject;
+            else
+                instance = Instantiate(Resources.Load("Prefabs/CharacterPrefab")) as GameObject;
             var unit = instance.AddComponent<FieldHero>();
             instance.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/sprite");
             instance.transform.localScale -= new Vector3(0.6f, 0.6f);
@@ -91,12 +108,6 @@ public class BattleManager : MonoBehaviour
             if (isAllied)
             {
                 instance.GetComponent<SpriteRenderer>().flipX = true;
-            }
-            else
-            {
-                //character = Instantiate(ninja.BattleSprite).AddComponent<Character>();
-                //enemyCharacters.Add(character);
-                //character.isPlayerCharacter = false;
             }
 
             unit.player = new Hero(hero);
@@ -113,9 +124,59 @@ public class BattleManager : MonoBehaviour
             if (isAllied)
                 battleMap.units[TeamID.BLUE].Add(unit);
             else
+            {
+                unit.player.Team = TeamID.RED;
                 battleMap.units[TeamID.RED].Add(unit);
+            }
 
-            ClientSend.SetPrepCharacters(unit.player);
+            if(isAllied)
+                ClientSend.SetPrepCharacters(unit.player);
+
+            //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
+            //healthBar.character = character;
+        }
+    }
+
+
+    public void SpawnCharacter(PlayerHero hero, Vector2Int location, bool isAllied, PrepHeroItem prepItem = null)
+    {
+        if (location.x >= 0 && location.x < battleMap.width && location.y >= 0 && location.y < battleMap.height)
+        {
+            GameObject instance;
+            if (hero.baseHeroData.overwriteGameObject != null)
+                instance = Instantiate(hero.baseHeroData.overwriteGameObject) as GameObject;
+            else
+                instance = Instantiate(Resources.Load("Prefabs/CharacterPrefab")) as GameObject;
+            var unit = instance.AddComponent<FieldHero>();
+            instance.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/sprite");
+            instance.transform.localScale -= new Vector3(0.6f, 0.6f);
+
+            if (isAllied)
+            {
+                instance.GetComponent<SpriteRenderer>().flipX = true;
+            }
+
+            unit.player = new Hero(hero);
+            unit.SetPosition(location.x, location.y);
+            battleMap.cells[location.x, location.y].objectOnTile = unit.player;
+            var charPos = unit.transform.position;
+            charPos.y += 1.25f;
+
+            if (prepItem != null)
+            {
+                prepItem.SetDisabled(true);
+            }
+
+            if (isAllied)
+                battleMap.units[TeamID.BLUE].Add(unit);
+            else
+            {
+                unit.player.Team = TeamID.RED;
+                battleMap.units[TeamID.RED].Add(unit);
+            }
+
+            if (isAllied)
+                ClientSend.SetPrepCharacters(unit.player);
 
             //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
             //healthBar.character = character;
@@ -142,11 +203,25 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    void ChangeReadyText(string _who)
+    {
+        GameObject.Find($"UI/Header/Ready{_who}").GetComponentInChildren<Image>().color = Color.blue;
+        GameObject.Find($"UI/Header/Ready{_who}").GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Ready";
+    }
+
+    void HideReadyText()
+    {
+        GameObject.Find($"UI/Header/ReadyOne").SetActive(false);
+        GameObject.Find($"UI/Header/ReadyTwo").SetActive(false);
+    }
+
     void Setup()
     {
         timerText = GameObject.Find("UI/Header/Turn/TurnTimer").GetComponent<TMPro.TextMeshProUGUI>();
         GameObject.Find("UI/ActionBar/Preparation/DoneBtn").GetComponent<Button>().onClick.AddListener(delegate {
             ready = !ready;
+            ChangeReadyText("One");
+            GameObject.Find("UI/ActionBar/Preparation/DoneBtn").GetComponent<Button>().interactable = false;
             ClientSend.ChangeReadyState(ready);
         });
 
@@ -163,7 +238,7 @@ public class BattleManager : MonoBehaviour
     void Update()
     {
         turnTimeLeft -= Time.deltaTime;
-
+        
         if (turnTimeLeft >= 0)
         {
             timerText.text = Mathf.Round(turnTimeLeft).ToString();
@@ -193,6 +268,7 @@ public class BattleManager : MonoBehaviour
         {
             actionBar.SetActive(true);
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.player.playerHero;
+            actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().SetupImages();
             actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.player.heroData.Name;
         }
     }
@@ -207,36 +283,44 @@ public class BattleManager : MonoBehaviour
                 case ActionState.TeamBlue:
                     if (selectedHero != null)
                     {
-                        if (!selectedHero.player.location.Equals(mousePos))
+                        if (selectedHero.player.Team == myTeam)
                         {
-                            if (currentState == TileObjState.Moving)
+                            if (!selectedHero.player.location.Equals(mousePos))
                             {
-                                if (battleMap._coloredCoordinates.Contains(mousePos))
+                                if (currentState == TileObjState.Moving)
                                 {
-                                    selectedHero.Move(mousePos.x, mousePos.y);
-                                    battleMap.ClearColor();
-                                    return;
+                                    if (battleMap._coloredCoordinates.Contains(mousePos))
+                                    {
+                                        selectedHero.Move(mousePos.x, mousePos.y);
+                                        battleMap.ClearColor();
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        currentState = TileObjState.None;
+                                    }
                                 }
-                                else
+                                else if (currentState == TileObjState.Attacking)
                                 {
+                                    if (battleMap._coloredCoordinates.Contains(mousePos))
+                                    {
+                                        //characterSelected.GetComponent<Animation>().Play("attack");
+                                        //selectedHero.characterAttack.Attack(characterSelected, tile.x, tile.y);
+                                        //_battle.CheckGame();
+                                    }
+                                    else
+                                    {
+                                        currentState = TileObjState.None;
+                                    }
+                                    //TODO: Remove it when attack animation are created
                                     currentState = TileObjState.None;
                                 }
+                                battleMap.ClearColor();
+                                selectedHero = null;
+                                actionBar.SetActive(false);
                             }
-                            else if (currentState == TileObjState.Attacking)
-                            {
-                                if (battleMap._coloredCoordinates.Contains(mousePos))
-                                {
-                                    //characterSelected.GetComponent<Animation>().Play("attack");
-                                    //selectedHero.characterAttack.Attack(characterSelected, tile.x, tile.y);
-                                    //_battle.CheckGame();
-                                }
-                                else
-                                {
-                                    currentState = TileObjState.None;
-                                }
-                                //TODO: Remove it when attack animation are created
-                                currentState = TileObjState.None;
-                            }
+                        } else
+                        {
                             battleMap.ClearColor();
                             selectedHero = null;
                             actionBar.SetActive(false);
@@ -252,6 +336,9 @@ public class BattleManager : MonoBehaviour
                                 if (objOnTile.Team == TeamID.BLUE && currentState == TileObjState.None)
                                 {
                                     battleMap.units[TeamID.BLUE].Where(hero => hero.player == objOnTile).First().WantToMove();
+                                } else if (objOnTile.Team == TeamID.RED)
+                                {
+                                    battleMap.units[TeamID.RED].Where(hero => hero.player == objOnTile).First().Select();
                                 }
                             }
                         }

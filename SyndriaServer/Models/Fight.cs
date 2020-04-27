@@ -15,7 +15,7 @@ namespace SyndriaServer.Models
     {
         public int id;
         public int currentTurn = 0;
-        public float turnTime = 25.0f;
+        public float turnTime = 30.0f;
 
         public Map map;
 
@@ -58,7 +58,7 @@ namespace SyndriaServer.Models
             foreach (var _c in players)
             {
                 if(_c != client)
-                    ServerSend.ChangeReadyState(_c);
+                    ServerSend.ChangeReadyState(_c, readyState);
                 if (_c.readyState == false)
                     allReady = false;
             }
@@ -92,6 +92,8 @@ namespace SyndriaServer.Models
             map = new Map();
             map.SetAdjastance();
             state = ActionState.Preparation;
+            // Since it's PvE, tell Client that PlayerTwo is ready
+            ServerSend.ChangeReadyState(players[0], true);
             SetTimer();
         }
 

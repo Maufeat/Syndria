@@ -18,6 +18,8 @@ namespace SyndriaServer
                 Console.ReadKey();
                 return;
             }
+            
+            GameLogic.LoadAllMaps();
 
             isRunning = true;
 

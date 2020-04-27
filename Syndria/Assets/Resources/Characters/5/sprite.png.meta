@@ -103,12 +103,12 @@ TextureImporter:
     bones:
     - name: root
       position: {x: 124.76759, y: 166.42938, z: 0}
-      rotation: {x: 0, y: 0, z: -0.6421477, w: 0.766581}
-      length: 36.43037
+      rotation: {x: 0, y: 0, z: -0.6421477, w: 0.76658094}
+      length: 36.43044
       parentId: -1
     - name: body
-      position: {x: 36.430386, y: 0.000004206532, z: 0}
-      rotation: {x: 0, y: 0, z: -0.08798823, w: 0.9961215}
+      position: {x: 36.43045, y: 0.0000032704252, z: 0}
+      rotation: {x: 0, y: 0, z: -0.08798817, w: 0.9961216}
       length: 29.598629
       parentId: 0
     - name: pants
@@ -127,23 +127,23 @@ TextureImporter:
       length: 27.188715
       parentId: 2
     - name: r_arm
-      position: {x: 33.54377, y: 329.98972, z: 3}
-      rotation: {x: 0, y: 0, z: -0.10364946, w: 0.99461395}
-      length: 33.614147
+      position: {x: 19.273663, y: 315.5481, z: 3}
+      rotation: {x: 0, y: 0, z: 0.13695616, w: 0.9905771}
+      length: 50.780205
       parentId: 0
     - name: r_hand
-      position: {x: 33.614147, y: 0.000004299242, z: 3}
-      rotation: {x: 0, y: 0, z: 0.047310125, w: 0.9988803}
-      length: 35.930996
+      position: {x: 50.78021, y: -0.0000062489107, z: 3}
+      rotation: {x: 0, y: 0, z: -0.28095752, w: 0.95972025}
+      length: 35.520447
       parentId: 5
     - name: l_arm
       position: {x: 30.521616, y: 254.41545, z: -1}
-      rotation: {x: 0, y: 0, z: -0.19282806, w: 0.98123264}
-      length: 34.960163
+      rotation: {x: 0, y: 0, z: -0.19282822, w: 0.9812325}
+      length: 34.960148
       parentId: 0
     - name: l_hand
-      position: {x: 34.960136, y: 0.000020684958, z: -1}
-      rotation: {x: 0, y: 0, z: -0.068234354, w: 0.99766934}
+      position: {x: 34.960148, y: 0.0000072597395, z: -1}
+      rotation: {x: 0, y: 0, z: -0.06823426, w: 0.99766934}
       length: 21.939737
       parentId: 7
     - name: head

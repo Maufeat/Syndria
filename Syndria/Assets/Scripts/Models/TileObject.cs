@@ -4,7 +4,7 @@ public class TileObject : ITileObject
 {
     public int ID { get; set; }
 
-    public TeamID Team { get; }
+    public TeamID Team { get; set; }
 
     public Vector2 location { get; set; }
 

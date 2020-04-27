@@ -1,0 +1,25 @@
+TODO:
+
+- Load Battlefield Async and send LOADED state to server AFTER battlefield has been instantiated:
+  (Test with shitty phone)
+https://youtu.be/YMj2qPq9CP8?t=169
+
+- Server / Client Side Maps with MapData
+
+- Village Functionality
+
+- Story Functionality           
+
+- Gacha System
+
+- Dialogue System
+
+- Reward System
+
+- Inventory System
+
+- Positioning System
+
+- Daily System
+
+- Gearing System

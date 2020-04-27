@@ -56,7 +56,7 @@ public class ClientHandle : MonoBehaviour
     {
         UIManager.instance.CloseAllPanel();
         UIManager.instance.CloseLoadingBox();
-        UIManager.instance.OpenPanel("TutorialFight", true);
+        UIManager.instance.OpenPanel("Battlefield", true);
     }
 
     public static void GoToVillage(Packet _packet)
@@ -84,7 +84,7 @@ public class ClientHandle : MonoBehaviour
         if (BattleManager.Instance != null)
         {
             var ready = _packet.ReadBool();
-            BattleManager.Instance.EndTurn();
+            BattleManager.Instance.ChangeReadyState(ready);
         }
     }
 }

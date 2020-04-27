@@ -9,4 +9,5 @@ public class HeroData : ScriptableObject
     public UnitType Type;
     public Rarity BaseRarity;
     public HeroStats BaseStats;
+    public GameObject overwriteGameObject;
 }

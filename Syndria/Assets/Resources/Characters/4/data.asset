@@ -18,3 +18,5 @@ MonoBehaviour:
   Type: 2
   BaseRarity: 4
   BaseStats: {fileID: 0}
+  overwriteGameObject: {fileID: 4361388881380943478, guid: a87c0fd5f0a852a45832ae8e25cafed0,
+    type: 3}
