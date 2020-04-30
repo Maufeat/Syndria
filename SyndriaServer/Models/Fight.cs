@@ -1,4 +1,6 @@
-﻿using SyndriaServer.Enums;
+﻿using Newtonsoft.Json;
+using SyndriaServer.Enums;
+using SyndriaServer.Models.FightData;
 using SyndriaServer.Utils;
 using SyndriaServer.Utils.Network;
 using System;
@@ -25,8 +27,9 @@ namespace SyndriaServer.Models
         
         public ActionState state;
 
-        public List<PlayerHero> teamOneCharacters;
-        public List<PlayerHero> teamTwoCharacters;
+        private MapData mapData;
+
+        public Dictionary<TeamID, List<HeroObject>> units = new Dictionary<TeamID, List<HeroObject>>();
 
         public void SetTimer()
         {
@@ -67,19 +70,39 @@ namespace SyndriaServer.Models
                 ServerSend.EndTurn(players);
         }
 
-        public Fight(int _id, int _playerOne, int _playerTwo)
+        // Solo PvE
+        public Fight(int _id, MapData data, int _playerOne)
         {
             id = _id;
+            mapData = data;
+
+            units.Add(TeamID.BLUE, new List<HeroObject>());
+            units.Add(TeamID.RED, new List<HeroObject>());
+            units.Add(TeamID.NEUTRAL, new List<HeroObject>());
 
             players.Add(Server.clients[_playerOne]);
-            players.Add(Server.clients[_playerTwo]);
             players[0].currentFight = this;
-            players[1].currentFight = this;
 
             map = new Map();
-            map.SetAdjastance();
             state = ActionState.Preparation;
-            SetTimer();
+            
+
+            // WAIT FOR PLAYER READY STATE
+            foreach(var enemy in mapData.mobs)
+            {
+                HeroObject _enemy = new HeroObject()
+                {
+                    ID = (units[TeamID.RED].Count + 1),
+                    location = new Vector2(enemy.x, enemy.y),
+                    baseHero = GameLogic.heroes[enemy.baseHeroId],
+                    IsDead = false,
+                    Team = TeamID.RED
+                };
+
+                ServerSend.SpawnUnit(players, _enemy);
+            }
+
+            //SetTimer();
         }
 
         public Fight(int _id, int _playerOne)
@@ -97,17 +120,18 @@ namespace SyndriaServer.Models
             SetTimer();
         }
 
-        public void SetCharacter(PlayerHero hero)
+        public void SetHero(HeroObject hero)
         {
             var tile = map.cells[Convert.ToInt32(hero.location.X), Convert.ToInt32(hero.location.Y)];
-            tile.heroOnTle = hero;
+            tile.objectOnTile = hero;
             Logger.Write($"Set Character on: {tile.coordinate.X} / {tile.coordinate.Y}");
         }
 
-        public void MoveCharacter(PlayerHero hero, int _x, int _y)
+        public void MoveHero(HeroObject hero, int _x, int _y)
         {
             var tile = map.cells[Convert.ToInt32(hero.location.X), Convert.ToInt32(hero.location.Y)];
-            map.cells[_x, _y].heroOnTle = tile.heroOnTle;
+            map.cells[_x, _y].objectOnTile = tile.objectOnTile;
+            tile.objectOnTile = null;
             Logger.Write($"Moved Character to: {_x} / {_y}");
         }
     }

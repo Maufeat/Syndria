@@ -11,6 +11,11 @@ namespace SyndriaServer.Models
         private int width = 9, height = 5;
         public Tile[,] cells;
 
+        public Map()
+        {
+            SetAdjastance();
+        }
+
         
         public void SetAdjastance()
         {

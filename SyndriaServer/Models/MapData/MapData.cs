@@ -25,6 +25,7 @@ namespace SyndriaServer.Models
         public int id;
         public int x;
         public int y;
+        public int baseHeroId;
         public MobStatsData stats;
         public List<int> spells;
     }

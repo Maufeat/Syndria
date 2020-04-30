@@ -10,6 +10,7 @@
         messageBox,
         changeTurn,
         changeReadyState,
+        spawnUnit
     }
 
     public enum C2S

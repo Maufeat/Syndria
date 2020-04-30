@@ -49,13 +49,10 @@ public class Client : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        tcp = new TCP();
-    }
-
     public void ConnectToServer()
     {
+        tcp = new TCP();
+
         InitializeClientData();
 
         isConnected = true;
@@ -205,6 +202,7 @@ public class Client : MonoBehaviour
             { (int)S2C.messageBox, ClientHandle.OpenMessageBox},
             { (int)S2C.changeTurn, ClientHandle.ChangeTurn },
             { (int)S2C.changeReadyState, ClientHandle.ChangeReadyState },
+            { (int)S2C.spawnUnit, ClientHandle.SpawnUnit },
         };
 
         Debug.Log("Initialized packets.");

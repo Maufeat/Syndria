@@ -1,7 +1,9 @@
 ﻿using SyndriaServer.Models;
+using SyndriaServer.Models.FightData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,10 +38,11 @@ namespace SyndriaServer.Utils.Network
                     // Send to Tutorial or Village;
                     if (player.tutorialDone == 0)
                     {
-                        var id = GameLogic.fights.Count() + 1;
+                        var id = GameLogic.fights.Count + 1;
                         ServerSend.GoToTutorial(_fromClient, id);
                         Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
-                        GameLogic.fights.Add(id, new Fight(id, _fromClient));
+                        // Hardcode Tutorial Map to ID 1
+                        GameLogic.fights.Add(id, new Fight(id, GameLogic.maps[1], _fromClient));
                     }
                     else
                     {
@@ -70,14 +73,19 @@ namespace SyndriaServer.Utils.Network
         public static void SetPrepCharacter(int _fromClient, Packet _packet)
         {
             int _charId = _packet.ReadInt();
-            
+            int location_x = _packet.ReadInt();
+            int location_y = _packet.ReadInt();
+
             var client = Server.clients[_fromClient];
 
-            var heroToPlace = client.player.heroes.Find(p => p.ID == _charId);
-            heroToPlace.location.X = _packet.ReadInt();
-            heroToPlace.location.Y = _packet.ReadInt();
+            var playerHero = client.player.heroes.Find(p => p.id == _charId);
 
-            client.currentFight.SetCharacter(heroToPlace);
+            var heroToPlace = new HeroObject();
+            heroToPlace.FromPlayer(playerHero);
+
+            heroToPlace.location = new Vector2(location_x, location_y);
+
+            client.currentFight.SetHero(heroToPlace);
 
             Logger.Write($"Added Character {heroToPlace.ID} to Location: {heroToPlace.location.X}/{heroToPlace.location.Y}");
         }

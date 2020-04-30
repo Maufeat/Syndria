@@ -6,8 +6,6 @@ namespace SyndriaServer.Interface
     public interface ITileObject
     {
         int ID { get; }
-        string Name { get; }
-        string Description { get; }
         TeamID Team { get; }
         Vector2 location { get; }
         bool walkable { get; }

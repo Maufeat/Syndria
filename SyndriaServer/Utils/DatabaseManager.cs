@@ -5,6 +5,8 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using SyndriaServer.Enums;
 using SyndriaServer.Models;
+using SyndriaServer.Models.FightData;
+using SyndriaServer.Models.PlayerData;
 
 namespace SyndriaServer.Utils
 {
@@ -157,14 +159,14 @@ namespace SyndriaServer.Utils
                 MySqlDataReader reader = cmd.ExecuteReader();
                 DataTable dtUser = new DataTable();
                 dtUser.Load(reader);
-                p.heroes = new List<PlayerHero>();
+                p.heroes = new List<PlayerHeroData>();
                 if (dtUser.Rows.Count > 0)
                 {
                     foreach (DataRow row in dtUser.Rows)
                     {
-                        PlayerHero hero = new PlayerHero();
-                        hero.ID = row.Field<int>("id");
-                        hero.hero = loadHeroData(row.Field<int>("hero_id"));
+                        PlayerHeroData hero = new PlayerHeroData();
+                        hero.id = row.Field<int>("id");
+                        hero.baseHero = GameLogic.heroes[row.Field<int>("hero_id")];
                         hero.level = row.Field<int>("level");
                         hero.xp = row.Field<int>("exp");
                         p.heroes.Add(hero);
@@ -182,35 +184,7 @@ namespace SyndriaServer.Utils
                 return false;
             }
         }
-
-        public static HeroData loadHeroData(int id)
-        {
-            MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT * FROM hero_data WHERE id ='" + id + "'";
-            MySqlDataReader reader = cmd.ExecuteReader();
-            DataTable dtUser = new DataTable();
-            dtUser.Load(reader);
-            if (dtUser.Rows.Count > 0)
-            {
-                DataRow row = dtUser.Rows[0];
-                HeroData hero = new HeroData()
-                {
-                    ID = row.Field<int>("id"),
-                    Name = row.Field<string>("name"),
-                    Description = row.Field<string>("description"),
-                    Type = (UnitType)row.Field<int>("type"),
-                    Rarity = (Rarity)row.Field<int>("rarity"),
-                    Aptitude = row.Field<int>("aptitude"),
-                    Heatlh = row.Field<int>("health"),
-                    Attack = row.Field<int>("attack"),
-                    AttackRange = row.Field<int>("attack_range"),
-                    Movement = row.Field<int>("movement"),
-                };
-                return hero;
-            }
-            return null;
-        }
-
+        
         public static bool getAccountByFacebookId(Player p)
         {
             try

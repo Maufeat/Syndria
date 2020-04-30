@@ -18,7 +18,8 @@ namespace SyndriaServer
                 Console.ReadKey();
                 return;
             }
-            
+
+            GameLogic.LoadHeroBase();
             GameLogic.LoadAllMaps();
 
             isRunning = true;

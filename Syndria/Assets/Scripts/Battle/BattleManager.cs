@@ -45,13 +45,14 @@ public class BattleManager : MonoBehaviour
     {
         battleMap = new Map();
         battleMap.Init();
-        Setup();
+        Setup(); // Map Visuals and Audio
         ChangeState(ActionState.Preparation);
         prepBar = GameObject.Find("ActionBar/Preparation");
         actionBar = GameObject.Find("ActionBar/ActionBar");
         actionBar.SetActive(false);
 
-        var pounchingball = new PlayerHero()
+        // Test Hero Placement
+        /*var pounchingball = new PlayerHero()
         {
             ID = 9000,
             baseHeroData = Resources.Load<HeroData>("Characters/9000/data"),
@@ -60,7 +61,7 @@ public class BattleManager : MonoBehaviour
             xp = 0
         };
 
-        SpawnCharacter(pounchingball, new Vector2Int(8, 2), false);
+        SpawnCharacter(pounchingball, new Vector2Int(8, 2), false);*/
     }
 
     public void EndTurn()
@@ -91,6 +92,23 @@ public class BattleManager : MonoBehaviour
         enemyReady = ready;
     }
 
+    public void SpawnUnit(Hero hero)
+    {
+        GameObject _gameObject = Instantiate(hero.heroData.overwriteGameObject) as GameObject;
+        var _heroScript = _gameObject.AddComponent<FieldHero>();
+        _gameObject.transform.localScale -= new Vector3(0.6f, 0.6f);
+
+        if (hero.Team == myTeam)
+            _gameObject.GetComponent<SpriteRenderer>().flipX = true;
+
+        _heroScript.hero = hero;
+        _heroScript.SetToCurrentPosition();
+
+        battleMap.cells[(int)hero.location.x, (int)hero.location.y].objectOnTile = _heroScript.hero;
+
+        battleMap.units[hero.Team].Add(_heroScript);
+    }
+
     public void SpawnCharacter(PlayerHero hero, Vector3 mouse, bool isAllied, PrepHeroItem prepItem = null)
     {
         var location = battleMap.GetTilePos(mouse);
@@ -110,9 +128,9 @@ public class BattleManager : MonoBehaviour
                 instance.GetComponent<SpriteRenderer>().flipX = true;
             }
 
-            unit.player = new Hero(hero);
+            unit.hero = new Hero(hero);
             unit.SetPosition(location.x, location.y);
-            battleMap.cells[location.x, location.y].objectOnTile = unit.player;
+            battleMap.cells[location.x, location.y].objectOnTile = unit.hero;
             var charPos = unit.transform.position;
             charPos.y += 1.25f;
 
@@ -125,12 +143,12 @@ public class BattleManager : MonoBehaviour
                 battleMap.units[TeamID.BLUE].Add(unit);
             else
             {
-                unit.player.Team = TeamID.RED;
+                unit.hero.Team = TeamID.RED;
                 battleMap.units[TeamID.RED].Add(unit);
             }
 
             if(isAllied)
-                ClientSend.SetPrepCharacters(unit.player);
+                ClientSend.SetPrepCharacters(unit.hero);
 
             //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
             //healthBar.character = character;
@@ -150,15 +168,15 @@ public class BattleManager : MonoBehaviour
             var unit = instance.AddComponent<FieldHero>();
             instance.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/sprite");
             instance.transform.localScale -= new Vector3(0.6f, 0.6f);
-
+             
             if (isAllied)
             {
                 instance.GetComponent<SpriteRenderer>().flipX = true;
             }
 
-            unit.player = new Hero(hero);
+            unit.hero = new Hero(hero);
             unit.SetPosition(location.x, location.y);
-            battleMap.cells[location.x, location.y].objectOnTile = unit.player;
+            battleMap.cells[location.x, location.y].objectOnTile = unit.hero;
             var charPos = unit.transform.position;
             charPos.y += 1.25f;
 
@@ -171,12 +189,12 @@ public class BattleManager : MonoBehaviour
                 battleMap.units[TeamID.BLUE].Add(unit);
             else
             {
-                unit.player.Team = TeamID.RED;
+                unit.hero.Team = TeamID.RED;
                 battleMap.units[TeamID.RED].Add(unit);
             }
 
             if (isAllied)
-                ClientSend.SetPrepCharacters(unit.player);
+                ClientSend.SetPrepCharacters(unit.hero);
 
             //HealthBar healthBar = Instantiate(healthBarPrefab, charPos, Quaternion.identity, character.transform).GetComponentInChildren<HealthBar>();
             //healthBar.character = character;
@@ -267,9 +285,9 @@ public class BattleManager : MonoBehaviour
         else
         {
             actionBar.SetActive(true);
-            actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.player.playerHero;
+            actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.hero.playerHero;
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().SetupImages();
-            actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.player.heroData.Name;
+            actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.heroData.Name;
         }
     }
 
@@ -283,9 +301,9 @@ public class BattleManager : MonoBehaviour
                 case ActionState.TeamBlue:
                     if (selectedHero != null)
                     {
-                        if (selectedHero.player.Team == myTeam)
+                        if (selectedHero.hero.Team == myTeam)
                         {
-                            if (!selectedHero.player.location.Equals(mousePos))
+                            if (!selectedHero.hero.location.Equals(mousePos))
                             {
                                 if (currentState == TileObjState.Moving)
                                 {
@@ -335,10 +353,10 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (objOnTile.Team == TeamID.BLUE && currentState == TileObjState.None)
                                 {
-                                    battleMap.units[TeamID.BLUE].Where(hero => hero.player == objOnTile).First().WantToMove();
+                                    battleMap.units[TeamID.BLUE].Where(hero => hero.hero == objOnTile).First().WantToMove();
                                 } else if (objOnTile.Team == TeamID.RED)
                                 {
-                                    battleMap.units[TeamID.RED].Where(hero => hero.player == objOnTile).First().Select();
+                                    battleMap.units[TeamID.RED].Where(hero => hero.hero == objOnTile).First().Select();
                                 }
                             }
                         }

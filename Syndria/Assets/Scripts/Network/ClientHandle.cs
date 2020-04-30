@@ -87,5 +87,25 @@ public class ClientHandle : MonoBehaviour
             BattleManager.Instance.ChangeReadyState(ready);
         }
     }
+    
+    public static void SpawnUnit(Packet _packet)
+    {
+        if (BattleManager.Instance != null)
+        {
+            int _id = _packet.ReadInt();
+            int _heroId = _packet.ReadInt();
+            TeamID _teamId = (TeamID)_packet.ReadInt();
+            int _location_x = _packet.ReadInt();
+            int _location_y = _packet.ReadInt();
+
+            var unit = new Hero()
+            {
+                ID = _id,
+                heroData = Resources.Load<HeroData>($"Characters/{ _heroId }/data"),
+                location = new Vector2(_location_x, _location_y)
+            };
+            
+            BattleManager.Instance.SpawnUnit(unit);
+        }
+    }
 }
- 

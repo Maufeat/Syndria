@@ -15,7 +15,7 @@ public class Tile
 
     public List<Tile> adjacencyList = new List<Tile>();
 
-    public AttackableObject objectOnTile;
+    public TileObject objectOnTile;
 
     //BFS 
     public bool visited = false;

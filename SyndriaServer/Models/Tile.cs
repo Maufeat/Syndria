@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SyndriaServer.Models.FightData;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace SyndriaServer.Models
@@ -15,7 +16,7 @@ namespace SyndriaServer.Models
 
         public List<Tile> adjacencyList = new List<Tile>();
 
-        public PlayerHero heroOnTle = null;
+        public TileObject objectOnTile = null;
 
         //BFS 
         public bool visited = false;

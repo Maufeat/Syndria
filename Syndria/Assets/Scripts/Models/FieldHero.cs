@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FieldHero : MonoBehaviour
 {
-    public Hero player;
+    public Hero hero;
 
     public float x_offset_fixed = -7.35f;
     public float y_offset_fixed = -2.45f;
@@ -25,30 +25,44 @@ public class FieldHero : MonoBehaviour
 
     private Material material;
 
+    private SpriteRenderer spriteRenderer;
+    private Animator animator;
+
     public void SetPosition(float x, float y)
     {
-        player.location = new Vector2(x, y);
-        transform.position = new Vector3(player.location.x * x_offset_multi + x_offset_fixed, player.location.y * y_offset_multi + y_offset_fixed, 5);
-        GetComponent<SpriteRenderer>().sortingOrder = (99 - Convert.ToInt32(player.location.y));
+        if(spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        hero.location = new Vector2(x, y);
+        transform.position = new Vector3(hero.location.x * x_offset_multi + x_offset_fixed, hero.location.y * y_offset_multi + y_offset_fixed, 5);
+        spriteRenderer.sortingOrder = (99 - Convert.ToInt32(hero.location.y));
+    }
+
+    public void SetToCurrentPosition()
+    {
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        transform.position = new Vector3(hero.location.x * x_offset_multi + x_offset_fixed, hero.location.y * y_offset_multi + y_offset_fixed, 5);
+        spriteRenderer.sortingOrder = (99 - Convert.ToInt32(hero.location.y));
     }
 
     public void Start()
     {
-        GetComponent<SpriteRenderer>().material = Instantiate(GetComponent<SpriteRenderer>().material);
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     public void Update()
     {
         if(hasAttacked && hasMoved && BattleManager.Instance.state == ActionState.TeamBlue)
         {
-            GetComponent<SpriteRenderer>().material.SetInt("_IsGray", 0);
+            spriteRenderer.material.SetInt("_IsGray", 0);
         } else
         {
-            GetComponent<SpriteRenderer>().material.SetInt("_IsGray", 1);
+            spriteRenderer.material.SetInt("_IsGray", 1);
         }
 
         blurAmount = Mathf.Clamp(blurAmount, 0f, 1.5f);
-        GetComponent<SpriteRenderer>().material.SetFloat("_BlurAmount", blurAmount);
+        spriteRenderer.material.SetFloat("_BlurAmount", blurAmount);
         if (blurActive)
         {
             blurAmount += 25f * Time.deltaTime;
@@ -64,7 +78,7 @@ public class FieldHero : MonoBehaviour
             if (totalWaypoints.Count >= 3)
                 moveSpeed = 7.5f;
             
-            Vector3 movePosition = Vector3.MoveTowards(new Vector3(player.location.x, player.location.y), target, Time.deltaTime * moveSpeed);
+            Vector3 movePosition = Vector3.MoveTowards(new Vector3(hero.location.x, hero.location.y), target, Time.deltaTime * moveSpeed);
             if (movePosition.x >= target.x - 0.01f && movePosition.x <= target.x + 0.01f && movePosition.y >= target.y - 0.01f && movePosition.y <= target.y + 0.01f)
             {
                 movePosition.x = target.x;
@@ -79,7 +93,7 @@ public class FieldHero : MonoBehaviour
                     isMoving = false;
                     totalWaypoints = new Stack<Vector3>();
                     moveSpeed = 5f;
-                    GetComponentInChildren<Animator>().SetBool("Run", false);
+                    animator.SetBool("Run", false);
                     if (!hasAttacked)
                     {
                         BattleManager.Instance.currentState = TileObjState.Attacking;
@@ -98,8 +112,8 @@ public class FieldHero : MonoBehaviour
         totalWaypoints = new Stack<Vector3>();
         waypoints = new Stack<Vector3>();
 
-        BattleManager.Instance.battleMap.RemoveUnit(player.location);
-        BattleManager.Instance.battleMap.AddUnit(player, new Vector2Int(x, y));
+        BattleManager.Instance.battleMap.RemoveUnit(hero.location);
+        BattleManager.Instance.battleMap.AddUnit(hero, new Vector2Int(x, y));
 
         Tile tile = BattleManager.Instance.battleMap.cells[x, y];
 
@@ -112,9 +126,9 @@ public class FieldHero : MonoBehaviour
 
         isMoving = true;
 
-        GetComponentInChildren<Animator>().SetBool("Run", true);
+        animator.SetBool("Run", true);
         target = waypoints.Pop();
-        GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 155);
+        spriteRenderer.color = new Color(255, 255, 255, 155);
         hasMoved = true;
         BattleManager.Instance.currentState = TileObjState.Pending;
     }
@@ -124,7 +138,7 @@ public class FieldHero : MonoBehaviour
         BattleManager.Instance.battleMap.ClearColor();
         BattleManager.Instance.currentState = TileObjState.Moving;
         BattleManager.Instance.selectedHero = this;
-        var adTiles = GetWalkableTiles((int)player.heroData.BaseStats.Movement);
+        var adTiles = GetWalkableTiles((int)hero.heroData.BaseStats.Movement);
         var coords = new List<Vector2Int>();
         foreach (Tile tile in adTiles)
         {
@@ -146,7 +160,7 @@ public class FieldHero : MonoBehaviour
 
         BattleManager.Instance.battleMap.ResetVisited();
 
-        Tile startTile = BattleManager.Instance.battleMap.GetTileByCoordinate(player.location);
+        Tile startTile = BattleManager.Instance.battleMap.GetTileByCoordinate(hero.location);
         startTile.distance = 0;
 
         open.Enqueue(startTile);

@@ -31,6 +31,17 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
             transform.Find("Level").gameObject.SetActive(false);
         disabledLayer = transform.Find("DisableTrigger").GetComponent<Image>();
     }
+
+    public void SetupImagesByHeroData(HeroData _heroData)
+    {
+        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{_heroData.ID}/thumb");
+        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)_heroData.BaseRarity}");
+        transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)_heroData.Type}");
+        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(_heroData.BaseRarity);
+        if (!showLevel)
+            transform.Find("Level").gameObject.SetActive(false);
+        disabledLayer = transform.Find("DisableTrigger").GetComponent<Image>();
+    }
     
     public void SetDisabled(bool _disabled)
     {
@@ -48,7 +59,7 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
 
         if (dragSprite == null)
         {
-            dragSprite = Instantiate(Resources.Load("Prefabs/CharacterPrefab")) as GameObject;
+            dragSprite = Instantiate(hero.baseHeroData.overwriteGameObject);
             dragSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/sprite");
             dragSprite.GetComponent<SpriteRenderer>().flipX = true;
             dragSprite.transform.localScale -= new Vector3(0.5f, 0.5f);

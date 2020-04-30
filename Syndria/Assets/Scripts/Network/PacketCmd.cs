@@ -9,6 +9,7 @@ public enum S2C
     messageBox,
     changeTurn,
     changeReadyState,
+    spawnUnit
 }
 
 public enum C2S

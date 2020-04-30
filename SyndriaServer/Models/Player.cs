@@ -1,4 +1,6 @@
 ﻿using SyndriaServer.Models;
+using SyndriaServer.Models.FightData;
+using SyndriaServer.Models.PlayerData;
 using SyndriaServer.Utils;
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,7 @@ namespace SyndriaServer
         public int diamonds { get; set; }
         public int tutorialDone { get; set; }
 
-        public List<PlayerHero> heroes { get; set; }
+        public List<PlayerHeroData> heroes { get; set; }
 
         public Player()
         {

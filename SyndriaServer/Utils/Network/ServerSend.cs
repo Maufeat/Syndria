@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SyndriaServer.Models;
+using SyndriaServer.Models.FightData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,8 +62,8 @@ namespace SyndriaServer.Utils.Network
                 _packet.Write(_player.heroes.Count);
                 foreach(var hero in _player.heroes)
                 {
-                    _packet.Write(hero.ID);
-                    _packet.Write(hero.hero.ID);
+                    _packet.Write(hero.id);
+                    _packet.Write(hero.baseHero.ID);
                     _packet.Write(hero.level);
                     _packet.Write(hero.xp);
                     _packet.Write(hero.aptitude);
@@ -114,12 +116,41 @@ namespace SyndriaServer.Utils.Network
             }
         }
 
-        public static void ChangeReadyState(Client client, bool ready)
+        public static void ChangeReadyState(Client client, bool _ready)
         {
             using (Packet _packet = new Packet((int)S2C.changeReadyState))
             {
-                _packet.Write(ready);
+                _packet.Write(_ready);
                 SendTCPData(client.id, _packet);
+            }
+        }
+
+        public static void SpawnUnit(List<Client> _toClients, HeroObject _heroData)
+        {
+            using (Packet _packet = new Packet((int)S2C.spawnUnit))
+            {
+
+                /*- SpawnUnit
+
+                id
+                heroId
+                teamId
+                location.x
+                location.y
+                stats
+                spells
+                */
+
+                Logger.Write("Spawned Unit");
+
+                _packet.Write(_heroData.ID);
+                _packet.Write(_heroData.baseHero.ID);
+                _packet.Write((int)_heroData.Team);
+                _packet.Write((int)_heroData.location.X);
+                _packet.Write((int)_heroData.location.Y);
+
+                foreach (var id in _toClients)
+                    SendTCPData(id.id, _packet);
             }
         }
     }

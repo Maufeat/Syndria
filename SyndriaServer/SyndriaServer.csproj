@@ -87,9 +87,13 @@
     <Compile Include="Interface\IStats.cs" />
     <Compile Include="Interface\IStatsModifier.cs" />
     <Compile Include="Interface\ITileObject.cs" />
+    <Compile Include="Models\FightData\AttackableObject.cs" />
+    <Compile Include="Models\FightData\HeroObject.cs" />
+    <Compile Include="Models\FightData\TileObject.cs" />
     <Compile Include="Models\HeroData.cs" />
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\MapData\MapData.cs" />
+    <Compile Include="Models\PlayerData\PlayerHeroData.cs" />
     <Compile Include="Models\PlayerHero.cs" />
     <Compile Include="Models\Fight.cs" />
     <Compile Include="Models\SpellData.cs" />
