@@ -286,7 +286,7 @@ public class BattleManager : MonoBehaviour
         {
             actionBar.SetActive(true);
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.hero.playerHero;
-            actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().SetupImages();
+            actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().SetupImagesByHeroData(selectedHero.hero.heroData);
             actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.heroData.Name;
         }
     }
