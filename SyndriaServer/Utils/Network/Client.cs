@@ -16,6 +16,7 @@ namespace SyndriaServer.Utils.Network
         public TCP tcp;
         public Player player;
 
+        // Fight properties.
         public Fight currentFight = null;
         public bool readyState = false;
 

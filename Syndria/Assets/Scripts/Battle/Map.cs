@@ -97,6 +97,20 @@ public class Map
         }
     }
 
+    public FieldHero GetFieldHeroById(int id)
+    {
+        foreach(var team in units)
+        {
+            foreach(var unit in team.Value)
+            {
+                if (unit.hero.ID == id)
+                    return unit;
+            }
+        }
+
+        return null;
+    }
+
     public Tile GetTileByCoordinate(Vector2 coordinate)
     {
         return cells[(int)coordinate.x, (int)coordinate.y];

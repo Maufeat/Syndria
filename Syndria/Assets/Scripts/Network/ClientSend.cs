@@ -47,6 +47,25 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void ClientLoaded()
+    {
+        using (Packet _packet = new Packet((int)C2S.battlefieldLoaded))
+        {
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void MoveUnit(int unitId, int x, int y)
+    {
+        using (Packet _packet = new Packet((int)C2S.moveUnit))
+        {
+            _packet.Write(unitId);
+            _packet.Write(x);
+            _packet.Write(y);
+            SendTCPData(_packet);
+        }
+    }
+
     public static void ChangeReadyState(bool ready)
     {
         using (Packet _packet = new Packet((int)C2S.changeReadyState))

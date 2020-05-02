@@ -125,6 +125,15 @@ namespace SyndriaServer.Utils.Network
             }
         }
 
+        public static void AllLoaded(List<Client> _toClients)
+        {
+            using (Packet _packet = new Packet((int)S2C.allLoaded))
+            {
+                foreach (var id in _toClients)
+                    SendTCPData(id.id, _packet);
+            }
+        }
+
         public static void SpawnUnit(List<Client> _toClients, HeroObject _heroData)
         {
             using (Packet _packet = new Packet((int)S2C.spawnUnit))
@@ -141,13 +150,26 @@ namespace SyndriaServer.Utils.Network
                 spells
                 */
 
-                Logger.Write("Spawned Unit");
+                Logger.Write($"Spawned Unit as {(int)_heroData.Team}");
 
                 _packet.Write(_heroData.ID);
                 _packet.Write(_heroData.baseHero.ID);
                 _packet.Write((int)_heroData.Team);
                 _packet.Write((int)_heroData.location.X);
                 _packet.Write((int)_heroData.location.Y);
+
+                foreach (var id in _toClients)
+                    SendTCPData(id.id, _packet);
+            }
+        }
+
+        public static void MoveHero(List<Client> _toClients, int _id, int _x, int _y)
+        {
+            using (Packet _packet = new Packet((int)S2C.moveUnit))
+            {
+                _packet.Write(_id);
+                _packet.Write(_x);
+                _packet.Write(_y);
 
                 foreach (var id in _toClients)
                     SendTCPData(id.id, _packet);

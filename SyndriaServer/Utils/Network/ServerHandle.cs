@@ -103,6 +103,32 @@ namespace SyndriaServer.Utils.Network
             Logger.Write("Client changed ready state: " + _state.ToString());
         }
 
+        public static void BattlefieldLoaded(int _fromClient, Packet _packet)
+        {
+            var client = Server.clients[_fromClient];
+            if (client.currentFight == null)
+                return;
+            
+            Logger.Write("Client has loaded. Send him current state.");
+
+            client.currentFight.clientLoaded(client);
+        }
+
+        public static void MoveUnit(int _fromClient, Packet _packet)
+        {
+            var client = Server.clients[_fromClient];
+            if (client.currentFight == null)
+                return;
+
+            int id = _packet.ReadInt();
+            int x = _packet.ReadInt();
+            int y = _packet.ReadInt();
+
+            client.currentFight.MoveHero(id, x, y);
+
+            Logger.Write($"Unit {id} moved to {x}/{y}");
+        }
+
         public static void CreateCharacter(int _fromClient, Packet _packet)
         {
             int heroId = _packet.ReadInt();

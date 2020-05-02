@@ -9,7 +9,9 @@ public enum S2C
     messageBox,
     changeTurn,
     changeReadyState,
-    spawnUnit
+    spawnUnit,
+    allLoaded,
+    moveUnit
 }
 
 public enum C2S
@@ -17,5 +19,7 @@ public enum C2S
     verifyAccessToken = 1,
     createCharacter,
     setPrepCharacter = 50,
-    changeReadyState
+    changeReadyState,
+    battlefieldLoaded,
+    moveUnit,
 }

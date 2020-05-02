@@ -17,6 +17,7 @@ namespace SyndriaServer.Models.FightData
 
         public void FromPlayer(PlayerHeroData _pHero)
         {
+            ID = _pHero.id;
             baseHero = _pHero.baseHero;
         }
     }

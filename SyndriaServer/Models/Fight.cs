@@ -23,6 +23,8 @@ namespace SyndriaServer.Models
 
         public List<Client> players = new List<Client>();
 
+        public Dictionary<Client, bool> loadedClients = new Dictionary<Client, bool>();
+
         public Timer turnTimer;
         
         public ActionState state;
@@ -53,6 +55,33 @@ namespace SyndriaServer.Models
             Logger.Write("Timer passed.");
         }
 
+        public void clientLoaded(Client client)
+        {
+            loadedClients[client] = true;
+
+            sendMapDataToClient(client);
+
+            bool allLoaded = true;
+            foreach(var loadedClient in loadedClients)
+                if (loadedClient.Value == false)
+                    allLoaded = false;
+
+            if (allLoaded)
+                ServerSend.AllLoaded(players);
+        }
+
+        public void sendMapDataToClient(Client client)
+        {
+            foreach(var tile in map.cells)
+            {
+                if(tile.objectOnTile != null)
+                {
+                    if(tile.objectOnTile is HeroObject)
+                        ServerSend.SpawnUnit(players, tile.objectOnTile as HeroObject);
+                }
+            }
+        }
+
         public void changeClientState(Client client, bool readyState)
         {
             client.readyState = readyState;
@@ -79,9 +108,11 @@ namespace SyndriaServer.Models
             units.Add(TeamID.BLUE, new List<HeroObject>());
             units.Add(TeamID.RED, new List<HeroObject>());
             units.Add(TeamID.NEUTRAL, new List<HeroObject>());
-
+            
             players.Add(Server.clients[_playerOne]);
             players[0].currentFight = this;
+
+            loadedClients.Add(players[0], false);
 
             map = new Map();
             state = ActionState.Preparation;
@@ -99,7 +130,7 @@ namespace SyndriaServer.Models
                     Team = TeamID.RED
                 };
 
-                ServerSend.SpawnUnit(players, _enemy);
+                map.cells[(int)_enemy.location.X, (int)_enemy.location.Y].objectOnTile = _enemy;
             }
 
             //SetTimer();
@@ -132,7 +163,25 @@ namespace SyndriaServer.Models
             var tile = map.cells[Convert.ToInt32(hero.location.X), Convert.ToInt32(hero.location.Y)];
             map.cells[_x, _y].objectOnTile = tile.objectOnTile;
             tile.objectOnTile = null;
+            ServerSend.MoveHero(players, hero.ID, _x, _y);
             Logger.Write($"Moved Character to: {_x} / {_y}");
+        }
+
+        public HeroObject GetHeroObjectById(int id)
+        {
+            foreach(var tile in map.cells)
+            {
+                if(tile.objectOnTile != null)
+                    if (tile.objectOnTile.ID == id)
+                        return tile.objectOnTile as HeroObject;
+            }
+
+            return null;
+        }
+
+        public void MoveHero(int id, int _x, int _y)
+        {
+            MoveHero(GetHeroObjectById(id), _x, _y);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace SyndriaServer.Utils.Network
 {
+
     public enum S2C
     {
         welcome = 1,
@@ -10,7 +11,9 @@
         messageBox,
         changeTurn,
         changeReadyState,
-        spawnUnit
+        spawnUnit,
+        allLoaded,
+        moveUnit
     }
 
     public enum C2S
@@ -19,5 +22,7 @@
         createCharacter,
         setPrepCharacter = 50,
         changeReadyState,
+        battlefieldLoaded,
+        moveUnit,
     }
 }

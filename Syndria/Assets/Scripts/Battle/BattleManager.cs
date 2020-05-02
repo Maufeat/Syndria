@@ -20,15 +20,18 @@ public class BattleManager : MonoBehaviour
     public bool enemyReady = false;
       
     public static BattleManager Instance;
-
+    
     public GameObject heroList;
     public GameObject actionBar;
     public GameObject prepBar;
 
+    public GameObject _goTurnChange;
+    public TMPro.TextMeshProUGUI _goTurnChangeText;
+
     public Color greeny = new Color32(0x1C, 0xA4, 0x00, 0xFF);
 
     public TMPro.TextMeshProUGUI timerText;
-
+    
     public FieldHero selectedHero = null;
     public TileObjState currentState = TileObjState.None;
 
@@ -62,6 +65,8 @@ public class BattleManager : MonoBehaviour
         };
 
         SpawnCharacter(pounchingball, new Vector2Int(8, 2), false);*/
+
+        ClientSend.ClientLoaded();
     }
 
     public void EndTurn()
@@ -71,8 +76,8 @@ public class BattleManager : MonoBehaviour
             prepBar.SetActive(false);
             HideReadyText();
             actionBar.SetActive(true);
-            GameObject.Find("UI/TurnChange").GetComponent<Animator>().Play("TurnChangeText");
-            GameObject.Find("UI/TurnChange/TurnChangeText").GetComponent<TMPro.TextMeshProUGUI>().text = "Turn " + turn;
+            _goTurnChange.GetComponent<Animator>().Play("TurnChangeText");
+            _goTurnChangeText.text = "Turn " + turn;
             turn++;
             ChangeState(ActionState.TeamBlue);
         }
@@ -85,11 +90,24 @@ public class BattleManager : MonoBehaviour
             ChangeState(ActionState.TeamRed);
         }
     }
-    
+
+    public void AllLoaded()
+    {
+        _goTurnChangeText.text = "Preparing Phase";
+        _goTurnChange.SetActive(true);
+    }
+
+
     public void ChangeReadyState(bool ready)
     {
         ChangeReadyText("Two");
         enemyReady = ready;
+    }
+
+    public void MoveUnit(int id, int x, int y)
+    {
+        var unitToMove = battleMap.GetFieldHeroById(id);
+        unitToMove.Move(x, y);
     }
 
     public void SpawnUnit(Hero hero)
@@ -97,6 +115,8 @@ public class BattleManager : MonoBehaviour
         GameObject _gameObject = Instantiate(hero.heroData.overwriteGameObject) as GameObject;
         var _heroScript = _gameObject.AddComponent<FieldHero>();
         _gameObject.transform.localScale -= new Vector3(0.6f, 0.6f);
+
+        Debug.Log($"Spawned Hero is: {hero.Team}");
 
         if (hero.Team == myTeam)
             _gameObject.GetComponent<SpriteRenderer>().flipX = true;
@@ -309,7 +329,7 @@ public class BattleManager : MonoBehaviour
                                 {
                                     if (battleMap._coloredCoordinates.Contains(mousePos))
                                     {
-                                        selectedHero.Move(mousePos.x, mousePos.y);
+                                        selectedHero.MoveReq(mousePos.x, mousePos.y);
                                         battleMap.ClearColor();
                                         return;
                                     }
@@ -353,7 +373,11 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (objOnTile.Team == TeamID.BLUE && currentState == TileObjState.None)
                                 {
-                                    battleMap.units[TeamID.BLUE].Where(hero => hero.hero == objOnTile).First().WantToMove();
+                                    var movingHero = battleMap.units[TeamID.BLUE].Where(hero => hero.hero == objOnTile).First();
+                                    if (!movingHero.hasMoved)
+                                        movingHero.WantToMove();
+                                    else
+                                        movingHero.Select();
                                 } else if (objOnTile.Team == TeamID.RED)
                                 {
                                     battleMap.units[TeamID.RED].Where(hero => hero.hero == objOnTile).First().Select();

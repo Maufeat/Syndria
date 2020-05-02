@@ -203,6 +203,8 @@ public class Client : MonoBehaviour
             { (int)S2C.changeTurn, ClientHandle.ChangeTurn },
             { (int)S2C.changeReadyState, ClientHandle.ChangeReadyState },
             { (int)S2C.spawnUnit, ClientHandle.SpawnUnit },
+            { (int)S2C.allLoaded, ClientHandle.AllLoaded },
+            { (int)S2C.moveUnit, ClientHandle.MoveUnit },
         };
 
         Debug.Log("Initialized packets.");

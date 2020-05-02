@@ -133,6 +133,11 @@ public class FieldHero : MonoBehaviour
         BattleManager.Instance.currentState = TileObjState.Pending;
     }
 
+    public void MoveReq(int x, int y)
+    {
+        ClientSend.MoveUnit(hero.ID, x, y);
+    }
+
     public void WantToMove()
     {
         BattleManager.Instance.battleMap.ClearColor();

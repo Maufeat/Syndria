@@ -63,7 +63,9 @@ namespace SyndriaServer.Utils.Network
                 { (int)C2S.verifyAccessToken, ServerHandle.VerifyAccessToken },
                 { (int)C2S.createCharacter, ServerHandle.CreateCharacter },
                 { (int)C2S.setPrepCharacter, ServerHandle.SetPrepCharacter },
-                { (int)C2S.changeReadyState, ServerHandle.ChangeReadyState }
+                { (int)C2S.changeReadyState, ServerHandle.ChangeReadyState },
+                { (int)C2S.battlefieldLoaded, ServerHandle.BattlefieldLoaded },
+                { (int)C2S.moveUnit, ServerHandle.MoveUnit }
             };
 
             Logger.Write("Initialized packets.");
