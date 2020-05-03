@@ -27,7 +27,7 @@ public class FieldHero : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Animator animator;
-
+    
     public void SetPosition(float x, float y)
     {
         if(spriteRenderer == null)
@@ -138,6 +138,33 @@ public class FieldHero : MonoBehaviour
         ClientSend.MoveUnit(hero.ID, x, y);
     }
 
+    public void WantToAttack(SpellData _spell)
+    {
+        BattleManager.Instance.battleMap.ClearColor();
+        BattleManager.Instance.currentState = TileObjState.Attacking;
+        BattleManager.Instance.selectedHero = this;
+        BattleManager.Instance.activeSpell = _spell;
+        var adTiles = GetTilesByPattern(hero.location, _spell.rangePattern);
+        var coords = new List<Vector2Int>();
+        foreach (Tile tile in adTiles)
+        {
+            coords.Add(tile.coordinate);
+        }
+        BattleManager.Instance.battleMap.RangeTiles(coords);
+    }
+
+    public void SpellPreview(Vector2 location)
+    {
+        WantToAttack(BattleManager.Instance.activeSpell);
+        var adTiles = GetTilesByPattern(location, BattleManager.Instance.activeSpell.attackPattern);
+        var coords = new List<Vector2Int>();
+        foreach (Tile tile in adTiles)
+        {
+            coords.Add(tile.coordinate);
+        }
+        BattleManager.Instance.battleMap.AttackingTiles(coords);
+    }
+
     public void WantToMove()
     {
         BattleManager.Instance.battleMap.ClearColor();
@@ -149,13 +176,42 @@ public class FieldHero : MonoBehaviour
         {
             coords.Add(tile.coordinate);
         }
-        BattleManager.Instance.battleMap.ColorTiles(coords, BattleManager.Instance.greeny);
+        BattleManager.Instance.battleMap.WalkingTiles(coords);
     }
 
     public void Select()
     {
         BattleManager.Instance.battleMap.ClearColor();
         BattleManager.Instance.selectedHero = this;
+    }
+
+    public List<Tile> GetTilesByPattern(Vector2 center, SpellPattern pattern)
+    {
+        List<Tile> tiles = new List<Tile>();
+
+        Tile startTile = BattleManager.Instance.battleMap.GetTileByCoordinate(center);
+
+        int x_offset = pattern._width / 2;
+        int y_offset = pattern._height / 2;
+
+        for (int x = 0; x < pattern._width; x++)
+        {
+            for (int y = 0; y < pattern._height; y++)
+            {
+                if(pattern.GetData(x,y) > 0)
+                {
+                    var relative_map_position_x = ((x_offset - pattern._width) + center.x) + x + 1;
+                    var relative_map_position_y = ((y_offset - pattern._height) + center.y) + y + 1;
+                    if (BattleManager.Instance.battleMap.IsInMap((int)relative_map_position_x, (int)relative_map_position_y))
+                    {
+                        Debug.Log($"X: {relative_map_position_x} Y:{relative_map_position_y}");
+                        tiles.Add(BattleManager.Instance.battleMap.GetTileByCoordinate(new Vector2(relative_map_position_x, relative_map_position_y)));
+                    }
+                }
+            }
+        }
+
+        return tiles;
     }
 
     public List<Tile> GetWalkableTiles(int distance)

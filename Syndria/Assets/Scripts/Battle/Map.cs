@@ -19,8 +19,10 @@ public class Map
     
     private Vector2Int hightlightedTile;
 
-    public List<Vector2Int> _coloredCoordinates = new List<Vector2Int>();
-    
+    public List<Vector2Int> _walkingTiles = new List<Vector2Int>();
+    public List<Vector2Int> _rangeTiles = new List<Vector2Int>();
+    public List<Vector2Int> _attackingTiles = new List<Vector2Int>();
+
     public TileBase _battleTile;
     public TileBase _highlightTile;
     public GameObject _prepObject;
@@ -111,6 +113,11 @@ public class Map
         return null;
     }
 
+    public bool IsInMap(int x, int y)
+    {
+        return (x >= 0 && x < width && y < height && y >= 0);
+    }
+
     public Tile GetTileByCoordinate(Vector2 coordinate)
     {
         return cells[(int)coordinate.x, (int)coordinate.y];
@@ -150,7 +157,7 @@ public class Map
         Vector3Int tile = tileMap.WorldToCell(mousePostition);
         Vector2Int destination = new Vector2Int(tile.x, tile.y);
 
-        if (destination.x >= 0 && destination.x < width && destination.y >= 0 && destination.y < height)
+        if (IsInMap(destination.x, destination.y))
         {
             if (destination != hightlightedTile)
             {
@@ -164,32 +171,81 @@ public class Map
 
     #region Tile Utils
 
-    public void ColorTiles(List<Vector2Int> tilesToColor, Color color)
+    public void WalkingTiles(List<Vector2Int> tilesToColor)
     {
         foreach (Vector2Int coordinate in tilesToColor)
         {
             Vector3Int location = new Vector3Int(coordinate.x, coordinate.y, 0);
             tileMap.SetTileFlags(location, TileFlags.None);
-            tileMap.SetColor(location, color);
-            _coloredCoordinates.Add(coordinate);
+            tileMap.SetColor(location, BattleManager.Instance.greeny);
+            _walkingTiles.Add(coordinate);
         }
     }
 
-    public void ColorTile(Vector2Int tileToColor, Color color)
+    public void WalkingTile(Vector2Int tileToColor)
     {
         Vector3Int location = new Vector3Int(tileToColor.x, tileToColor.y, 0);
         tileMap.SetTileFlags(location, TileFlags.None);
-        tileMap.SetColor(location, color);
-        _coloredCoordinates.Add(tileToColor);
+        tileMap.SetColor(location, BattleManager.Instance.greeny);
+        _walkingTiles.Add(tileToColor);
+    }
+
+    public void RangeTiles(List<Vector2Int> tilesToColor)
+    {
+        foreach (Vector2Int coordinate in tilesToColor)
+        {
+            Vector3Int location = new Vector3Int(coordinate.x, coordinate.y, 0);
+            tileMap.SetTileFlags(location, TileFlags.None);
+            tileMap.SetColor(location, BattleManager.Instance.bluey);
+            _rangeTiles.Add(coordinate);
+        }
+    }
+
+    public void AttackingTiles(List<Vector2Int> tilesToColor)
+    {
+        foreach (Vector2Int coordinate in tilesToColor)
+        {
+            Vector3Int location = new Vector3Int(coordinate.x, coordinate.y, 0);
+            tileMap.SetTileFlags(location, TileFlags.None);
+            tileMap.SetColor(location, BattleManager.Instance.redy);
+            _attackingTiles.Add(coordinate);
+        }
     }
 
     public void ClearColor()
     {
-        foreach (Vector2Int coordinate in _coloredCoordinates)
+        foreach (Vector2Int coordinate in _walkingTiles)
         {
             tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), new Color(0.2f, 0.2f, 0.2f, 0.8f));
         }
-        _coloredCoordinates.Clear();
+        foreach (Vector2Int coordinate in _rangeTiles)
+        {
+            tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), new Color(0.2f, 0.2f, 0.2f, 0.8f));
+        }
+        foreach (Vector2Int coordinate in _attackingTiles)
+        {
+            tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), new Color(0.2f, 0.2f, 0.2f, 0.8f));
+        }
+
+        _walkingTiles.Clear();
+        _rangeTiles.Clear();
+        _attackingTiles.Clear();
+    }
+
+
+    public void ClearColorForSpellPreview()
+    {
+        foreach (Vector2Int coordinate in _walkingTiles)
+        {
+            tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), new Color(0.2f, 0.2f, 0.2f, 0.8f));
+        }
+        foreach (Vector2Int coordinate in _rangeTiles)
+        {
+            tileMap.SetColor(new Vector3Int(coordinate.x, coordinate.y, 0), new Color(0.2f, 0.2f, 0.2f, 0.8f));
+        }
+
+        _walkingTiles.Clear();
+        _rangeTiles.Clear();
     }
 
     public void SetHighlight(Vector2Int pos, TileBase tile)

@@ -90,6 +90,11 @@ namespace SyndriaServer.Utils.Network
             Logger.Write($"Added Character {heroToPlace.ID} to Location: {heroToPlace.location.X}/{heroToPlace.location.Y}");
         }
 
+        public static void Attack(int _fromClient, Packet packet)
+        {
+
+        }
+
         public static void ChangeReadyState(int _fromClient, Packet _packet)
         {
             var client = Server.clients[_fromClient];

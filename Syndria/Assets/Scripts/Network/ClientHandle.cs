@@ -39,7 +39,11 @@ public class ClientHandle : MonoBehaviour
                 level = _packet.ReadInt(),
                 xp = _packet.ReadInt(),
                 aptitude = _packet.ReadInt()
+                
             };
+            //Give player a Skill.
+            p.spellData = new List<SpellData>();
+            p.spellData.Add(Resources.Load<SpellData>("Spells/Data/1"));
             p.baseHeroData = Resources.Load<HeroData>($"Characters/{heroId}/data");
             Client.instance.me.heroes.Add(p);
         }

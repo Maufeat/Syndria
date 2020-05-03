@@ -19,6 +19,7 @@ namespace SyndriaServer
                 return;
             }
 
+            GameLogic.LoadSpellPatterns();
             GameLogic.LoadHeroBase();
             GameLogic.LoadAllMaps();
 

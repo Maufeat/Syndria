@@ -67,7 +67,7 @@ namespace Assets.Editor
 
             if (GUILayout.Button("Save Pattern"))
             {
-                AssetDatabase.CreateAsset(pattern, "Assets/Resources/Spells/newpattern.asset");
+                AssetDatabase.CreateAsset(pattern, "Assets/Resources/Spells/Patterns/newpattern.asset");
                 EditorUtility.SetDirty(pattern);
                 AssetDatabase.SaveAssets();
             }

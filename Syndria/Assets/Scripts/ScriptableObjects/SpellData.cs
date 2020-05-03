@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Battle;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "data", menuName = "Spells/Add Spell")]
@@ -7,9 +8,12 @@ public class SpellData : ScriptableObject
     public int ID;
     public string Name;
     public Rarity Rarity;
-    public List<UnitType> Movement;
-    public SpellPattern pattern;
+    public List<UnitType> CanLearn;
+    public SpellPattern rangePattern;
+    public SpellPattern attackPattern;
     public Sprite sprite;
+    public int range;
+    public Spell spellScript;
     public GameObject anim;
 }
 

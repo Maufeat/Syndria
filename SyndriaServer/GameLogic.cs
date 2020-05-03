@@ -1,13 +1,17 @@
 ﻿using Newtonsoft.Json;
 using SyndriaServer.Models;
+using SyndriaServer.Models.FightData;
 using SyndriaServer.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using YamlDotNet.RepresentationModel;
 
 namespace SyndriaServer
 {
     public class GameLogic
     {
+        public static Dictionary<int, SpellPattern> spellPatterns = new Dictionary<int, SpellPattern>();
         public static Dictionary<int, HeroData> heroes = new Dictionary<int, HeroData>();
         public static Dictionary<int, MapData> maps = new Dictionary<int, MapData>();
         public static Dictionary<int, Fight> fights = new Dictionary<int, Fight>();
@@ -22,6 +26,48 @@ namespace SyndriaServer
             }*/
         }
 
+        public static void LoadSpellPatterns()
+        {
+            string path = Directory.GetCurrentDirectory() + "/spells/patterns";
+
+            foreach (string file in Directory.EnumerateFiles(path, "*.asset"))
+            {
+                var content = File.ReadAllText(file);
+                var yaml = new YamlStream();
+                yaml.Load(new StringReader(content));
+                
+                var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+
+                var monobehaviour = (YamlMappingNode)mapping.Children[new YamlScalarNode("MonoBehaviour")];
+
+                var id = int.Parse(monobehaviour.Children[new YamlScalarNode("id")].ToString());
+                var _width = int.Parse(monobehaviour.Children[new YamlScalarNode("_width")].ToString());
+                var _height = int.Parse(monobehaviour.Children[new YamlScalarNode("_height")].ToString());
+                var _pattern = ConvertStringToIntArray(monobehaviour.Children[new YamlScalarNode("_pattern")].ToString());
+
+                var pattern = new SpellPattern()
+                {
+                    id = id,
+                    _width = _width,
+                    _height = _height,
+                    _pattern = _pattern,
+                };
+                spellPatterns.Add(id, pattern);
+            }
+
+            Logger.Write($"Loaded {spellPatterns.Count} Spell Patterns");
+        }
+
+        public static int[] ConvertStringToIntArray(string array)
+        {
+            int[] i = new int[array.ToCharArray().Length];
+            for(var c = 0; c < array.ToCharArray().Length; c++)
+            {
+                i[c] = array.ToCharArray()[c];
+            }
+
+            return i;
+        }
 
         public static void LoadHeroBase()
         {

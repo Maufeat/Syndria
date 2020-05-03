@@ -9,13 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91013a52f8cdc494ab76afd4e08b95dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 22d9f1334ba06b84097fc09d61480354, type: 3}
   m_Name: 1
   m_EditorClassIdentifier: 
-  ID: 0
-  Name: 
-  Rarity: 0
-  Movement: 
-  pattern: 
-  sprite: {fileID: 0}
+  ID: 1
+  Name: Detonation
+  Rarity: 2
+  CanLearn: 02000000
+  rangePattern: {fileID: 11400000, guid: b02c92bb946c410439ade84abb991417, type: 2}
+  attackPattern: {fileID: 11400000, guid: cac7e719e5a1e8f4cbb1055dae5d58cf, type: 2}
+  sprite: {fileID: 21300000, guid: 892457ed96f2e32488beadef082f0248, type: 3}
+  range: 6
   anim: {fileID: 0}

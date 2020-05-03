@@ -29,10 +29,13 @@ public class BattleManager : MonoBehaviour
     public TMPro.TextMeshProUGUI _goTurnChangeText;
 
     public Color greeny = new Color32(0x1C, 0xA4, 0x00, 0xFF);
+    public Color bluey = new Color32(0x00, 0x1C, 0xA4, 0xFF);
+    public Color redy = new Color32(0xA4, 0x00, 0x1C, 0xFF);
 
     public TMPro.TextMeshProUGUI timerText;
-    
+
     public FieldHero selectedHero = null;
+    public SpellData activeSpell = null;
     public TileObjState currentState = TileObjState.None;
 
     private void Awake()
@@ -132,7 +135,7 @@ public class BattleManager : MonoBehaviour
     public void SpawnCharacter(PlayerHero hero, Vector3 mouse, bool isAllied, PrepHeroItem prepItem = null)
     {
         var location = battleMap.GetTilePos(mouse);
-        if (location.x >= 0 && location.x < battleMap.width && location.y >= 0 && location.y < battleMap.height)
+        if (battleMap.IsInMap(location.x, location.y))
         {
             GameObject instance;
             if (hero.baseHeroData.overwriteGameObject != null)
@@ -178,7 +181,7 @@ public class BattleManager : MonoBehaviour
 
     public void SpawnCharacter(PlayerHero hero, Vector2Int location, bool isAllied, PrepHeroItem prepItem = null)
     {
-        if (location.x >= 0 && location.x < battleMap.width && location.y >= 0 && location.y < battleMap.height)
+        if (battleMap.IsInMap(location.x, location.y))
         {
             GameObject instance;
             if (hero.baseHeroData.overwriteGameObject != null)
@@ -231,7 +234,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (prepTile.coordinate.x < 2)
                     {
-                        battleMap.ColorTile(prepTile.coordinate, greeny);
+                        battleMap.WalkingTile(prepTile.coordinate);
                     }
                 }
                 break;
@@ -295,7 +298,7 @@ public class BattleManager : MonoBehaviour
         clickEvent();
         idk();
     }
-
+    
     void idk()
     {
         if (selectedHero == null)
@@ -308,13 +311,18 @@ public class BattleManager : MonoBehaviour
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.hero.playerHero;
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().SetupImagesByHeroData(selectedHero.hero.heroData);
             actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.heroData.Name;
+            int i = 1;
+            foreach (var spell in selectedHero.hero.playerHero.spellData)
+            {
+                actionBar.transform.Find("SelectedHeroInfo/Spells/Slot" + i).GetComponent<SkillBtn>().ChangeBtn(spell);
+            }
         }
     }
 
     void clickEvent()
     {
         var mousePos = battleMap.GetTilePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        if (Input.GetMouseButtonDown(0) && mousePos.x >= 0 && mousePos.x < battleMap.width && mousePos.y < battleMap.height && mousePos.y >= 0 && currentState != TileObjState.Pending)
+        if (Input.GetMouseButtonDown(0) && battleMap.IsInMap(mousePos.x, mousePos.y) && currentState != TileObjState.Pending)
         {
             switch (state)
             {
@@ -327,7 +335,7 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (currentState == TileObjState.Moving)
                                 {
-                                    if (battleMap._coloredCoordinates.Contains(mousePos))
+                                    if (battleMap._walkingTiles.Contains(mousePos))
                                     {
                                         selectedHero.MoveReq(mousePos.x, mousePos.y);
                                         battleMap.ClearColor();
@@ -340,11 +348,9 @@ public class BattleManager : MonoBehaviour
                                 }
                                 else if (currentState == TileObjState.Attacking)
                                 {
-                                    if (battleMap._coloredCoordinates.Contains(mousePos))
+                                    if (battleMap._attackingTiles.Contains(mousePos))
                                     {
-                                        //characterSelected.GetComponent<Animation>().Play("attack");
-                                        //selectedHero.characterAttack.Attack(characterSelected, tile.x, tile.y);
-                                        //_battle.CheckGame();
+                                        //selectedHero.SpellPreview();
                                     }
                                     else
                                     {
@@ -381,6 +387,30 @@ public class BattleManager : MonoBehaviour
                                 } else if (objOnTile.Team == TeamID.RED)
                                 {
                                     battleMap.units[TeamID.RED].Where(hero => hero.hero == objOnTile).First().Select();
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        if (battleMap.IsInMap(mousePos.x, mousePos.y) && currentState != TileObjState.Pending)
+        {
+            switch (state)
+            {
+                case ActionState.TeamBlue:
+                    if (selectedHero != null)
+                    {
+                        if (selectedHero.hero.Team == myTeam)
+                        {
+                            if (currentState == TileObjState.Attacking)
+                            {
+                                if (battleMap._rangeTiles.Contains(mousePos))
+                                {
+                                    selectedHero.SpellPreview(mousePos);
+                                } else
+                                {
+                                    selectedHero.WantToAttack(BattleManager.Instance.activeSpell);
                                 }
                             }
                         }
