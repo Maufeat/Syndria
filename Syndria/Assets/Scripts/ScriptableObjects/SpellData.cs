@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Battle;
+using Assets.Scripts.Interface.Battle;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ public class SpellData : ScriptableObject
     public SpellPattern attackPattern;
     public Sprite sprite;
     public int range;
-    public Spell spellScript;
+    public GameObject prefab;
     public GameObject anim;
 }
 

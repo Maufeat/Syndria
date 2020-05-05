@@ -105,6 +105,7 @@
     <Compile Include="Models\Fight.cs" />
     <Compile Include="Enums\SpellEffect.cs" />
     <Compile Include="Models\Tile.cs" />
+    <Compile Include="Scripts\Spells\Detonation.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DatabaseManager.cs" />
     <Compile Include="Utils\Facebook\DebugToken.cs" />

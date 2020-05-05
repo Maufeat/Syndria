@@ -2,13 +2,13 @@
 using SyndriaServer.Models.PlayerData;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace SyndriaServer.Models.FightData
 {
     public class HeroObject : AttackableObject, IAiObject
     {
         public HeroData baseHero { get; set; }
-        public List<SpellData> spellData;
         
         public void OnKill(IAttackableObject killed)
         {
@@ -19,6 +19,7 @@ namespace SyndriaServer.Models.FightData
         {
             ID = _pHero.id;
             baseHero = _pHero.baseHero;
+            Name = baseHero.Name;
         }
     }
 }

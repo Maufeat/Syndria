@@ -20,6 +20,7 @@ namespace SyndriaServer
             }
 
             GameLogic.LoadSpellPatterns();
+            GameLogic.LoadSpells();
             GameLogic.LoadHeroBase();
             GameLogic.LoadAllMaps();
 

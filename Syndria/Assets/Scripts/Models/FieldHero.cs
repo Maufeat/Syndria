@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Battle;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -133,9 +134,31 @@ public class FieldHero : MonoBehaviour
         BattleManager.Instance.currentState = TileObjState.Pending;
     }
 
+    public void Attack(int id, int x, int y)
+    {
+        foreach (var spell in hero.playerHero.spellData)
+        {
+            if (spell.ID == id)
+            {
+                Vector2 castPos = new Vector2(x, y);
+                animator.Play("Attack");
+                SpellHolder holder = spell.prefab.GetComponent<SpellHolder>();
+                holder.spell.spellData = spell;
+                holder.spell.Cast(castPos, GetTilesByPattern(castPos, spell.attackPattern));
+                //spell.Cast(castPos, GetTilesByPattern(castPos, spell.attackPattern));
+            }
+        }
+    }
+
     public void MoveReq(int x, int y)
     {
         ClientSend.MoveUnit(hero.ID, x, y);
+    }
+
+    public void AttackReq(int spellId, int x, int y)
+    {
+        //Debug.Log($"Attack Req: {spellId} {x}/{y}");
+        ClientSend.Attack(hero.ID, spellId, x, y);
     }
 
     public void WantToAttack(SpellData _spell)
@@ -204,7 +227,6 @@ public class FieldHero : MonoBehaviour
                     var relative_map_position_y = ((y_offset - pattern._height) + center.y) + y + 1;
                     if (BattleManager.Instance.battleMap.IsInMap((int)relative_map_position_x, (int)relative_map_position_y))
                     {
-                        Debug.Log($"X: {relative_map_position_x} Y:{relative_map_position_y}");
                         tiles.Add(BattleManager.Instance.battleMap.GetTileByCoordinate(new Vector2(relative_map_position_x, relative_map_position_y)));
                     }
                 }

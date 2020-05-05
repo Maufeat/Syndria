@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+using SyndriaServer.Enums;
+using SyndriaServer.Interface;
 using SyndriaServer.Models;
 using SyndriaServer.Models.FightData;
+using SyndriaServer.Scripts.Spells;
 using SyndriaServer.Utils;
 using System;
 using System.Collections.Generic;
@@ -11,7 +14,9 @@ namespace SyndriaServer
 {
     public class GameLogic
     {
+        public static Dictionary<int, ISpell> spellScripts = new Dictionary<int, ISpell>();
         public static Dictionary<int, SpellPattern> spellPatterns = new Dictionary<int, SpellPattern>();
+        public static Dictionary<int, SpellData> spells = new Dictionary<int, SpellData>();
         public static Dictionary<int, HeroData> heroes = new Dictionary<int, HeroData>();
         public static Dictionary<int, MapData> maps = new Dictionary<int, MapData>();
         public static Dictionary<int, Fight> fights = new Dictionary<int, Fight>();
@@ -24,6 +29,11 @@ namespace SyndriaServer
             {
                 fight.Value.Update();
             }*/
+        }
+
+        public static void LoadSpellScripts()
+        {
+            spellScripts.Add(1, new Detonation());
         }
 
         public static void LoadSpellPatterns()
@@ -56,6 +66,42 @@ namespace SyndriaServer
             }
 
             Logger.Write($"Loaded {spellPatterns.Count} Spell Patterns");
+        }
+
+        public static void LoadSpells()
+        {
+            LoadSpellScripts(); 
+            string path = Directory.GetCurrentDirectory() + "/spells/datas";
+
+            foreach (string file in Directory.EnumerateFiles(path, "*.json"))
+            {
+                dynamic deserialize = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(file));
+                
+                var id = int.Parse(deserialize["id"].ToString());
+                var name = deserialize["name"].ToString();
+                var rarity = (Rarity)int.Parse(deserialize["rarity"].ToString());
+                int[] canLearn = ConvertStringToIntArray(deserialize["canLearn"].ToString());
+                SpellPattern rangePattern = spellPatterns[int.Parse(deserialize["rangePattern"].ToString())];
+                SpellPattern attackPattern = spellPatterns[int.Parse(deserialize["attackPattern"].ToString())];
+                var spellScript = int.Parse(deserialize["spellScript"].ToString());
+                var range = int.Parse(deserialize["range"].ToString());
+
+                SpellData newSpell = new SpellData();
+
+                newSpell.ID = id;
+                newSpell.Name = name;
+                newSpell.Rarity = rarity;
+                newSpell.CanLearn = new List<UnitType>();
+                newSpell.rangePattern = rangePattern;
+                newSpell.attackPattern = attackPattern;
+                newSpell.spellScript = spellScripts[spellScript];
+                foreach (var i in canLearn)
+                    newSpell.CanLearn.Add((UnitType)i);
+
+                spells.Add(id, newSpell);
+            }
+
+            Logger.Write($"Loaded {spells.Count} Spells");
         }
 
         public static int[] ConvertStringToIntArray(string array)

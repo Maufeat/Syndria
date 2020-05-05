@@ -1,4 +1,5 @@
 ﻿using SyndriaServer.Interface;
+using SyndriaServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,13 @@ namespace SyndriaServer.Models.FightData
 
         public void Die(IAttackableObject killer)
         {
-            throw new NotImplementedException();
+            Logger.Write($"{killer.Name} has killed {Name}");
+            //throw new NotImplementedException();
         }
 
         public void TakeDamage(IAttackableObject attacker, float damage, bool isCrit)
         {
-            throw new NotImplementedException();
+            Logger.Write($"{attacker.Name} dealt {damage} to {Name}");
         }
     }
 }

@@ -16,8 +16,9 @@ MonoBehaviour:
   Name: Detonation
   Rarity: 2
   CanLearn: 02000000
-  rangePattern: {fileID: 11400000, guid: b02c92bb946c410439ade84abb991417, type: 2}
-  attackPattern: {fileID: 11400000, guid: cac7e719e5a1e8f4cbb1055dae5d58cf, type: 2}
+  rangePattern: {fileID: 11400000, guid: 928dba87f5863b74b8cc38041162276f, type: 2}
+  attackPattern: {fileID: 11400000, guid: 425be33d06a168e458eb24cbbb89a242, type: 2}
   sprite: {fileID: 21300000, guid: 892457ed96f2e32488beadef082f0248, type: 3}
   range: 6
-  anim: {fileID: 0}
+  prefab: {fileID: 3261468708918872497, guid: a464479b06cccae45aa660ecef4965d9, type: 3}
+  anim: {fileID: 2376210147499652268, guid: 2d75802427ccd524baa2a0d27ac04aea, type: 3}

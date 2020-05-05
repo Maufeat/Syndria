@@ -205,6 +205,7 @@ public class Client : MonoBehaviour
             { (int)S2C.spawnUnit, ClientHandle.SpawnUnit },
             { (int)S2C.allLoaded, ClientHandle.AllLoaded },
             { (int)S2C.moveUnit, ClientHandle.MoveUnit },
+            { (int)S2C.attack, ClientHandle.Attack },
         };
 
         Debug.Log("Initialized packets.");

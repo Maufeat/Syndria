@@ -1,4 +1,5 @@
-﻿using SyndriaServer.Models.FightData;
+﻿using SyndriaServer.Models;
+using SyndriaServer.Models.FightData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,6 @@ namespace SyndriaServer.Interface
         Vector2 location { get; set; }
         // TODO: SpellData 
 
-        bool Cast(Vector2 location, AttackableObject target);
+        bool Cast(Fight fight, Vector2 location, List<Tile> aoe);
     }
 }

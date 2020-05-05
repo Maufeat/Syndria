@@ -13,7 +13,8 @@
         changeReadyState,
         spawnUnit,
         allLoaded,
-        moveUnit
+        moveUnit,
+        attack
     }
 
     public enum C2S
@@ -24,5 +25,6 @@
         changeReadyState,
         battlefieldLoaded,
         moveUnit,
+        attack
     }
 }

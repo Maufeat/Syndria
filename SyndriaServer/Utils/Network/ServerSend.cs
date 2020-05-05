@@ -175,5 +175,19 @@ namespace SyndriaServer.Utils.Network
                     SendTCPData(id.id, _packet);
             }
         }
+
+        public static void Attack(List<Client> _toClients, int _id, int _spellId, int _x, int _y)
+        {
+            using (Packet _packet = new Packet((int)S2C.attack))
+            {
+                _packet.Write(_id);
+                _packet.Write(_spellId);
+                _packet.Write(_x);
+                _packet.Write(_y);
+
+                foreach (var id in _toClients)
+                    SendTCPData(id.id, _packet);
+            }
+        }
     }
 }

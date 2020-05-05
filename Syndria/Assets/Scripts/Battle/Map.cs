@@ -231,8 +231,7 @@ public class Map
         _rangeTiles.Clear();
         _attackingTiles.Clear();
     }
-
-
+    
     public void ClearColorForSpellPreview()
     {
         foreach (Vector2Int coordinate in _walkingTiles)
@@ -273,16 +272,4 @@ public class Map
     }
 
     #endregion
-
-    public void WantToMove(Hero character)
-    {
-        /*ÜClearColor();
-        var adTiles = .GetWalkableTiles(characterSelected, character.ninja.Stats.MovementRange);
-        var coords = new List<Vector2Int>();
-        foreach (Tile tile in adTiles)
-        {
-            coords.Add(tile.coordinate);
-        }
-        ColorTiles(coords, Color.green);*/
-    }
 }

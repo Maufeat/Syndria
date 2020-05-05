@@ -66,6 +66,18 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void Attack(int unitId, int spellId, int x, int y)
+    {
+        using (Packet _packet = new Packet((int)C2S.attack))
+        {
+            _packet.Write(unitId);
+            _packet.Write(spellId);
+            _packet.Write(x);
+            _packet.Write(y);
+            SendTCPData(_packet);
+        }
+    }
+
     public static void ChangeReadyState(bool ready)
     {
         using (Packet _packet = new Packet((int)C2S.changeReadyState))

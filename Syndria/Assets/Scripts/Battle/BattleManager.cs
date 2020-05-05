@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using Assets.Scripts.Battle;
 
 public class BattleManager : MonoBehaviour
 {
@@ -111,6 +112,12 @@ public class BattleManager : MonoBehaviour
     {
         var unitToMove = battleMap.GetFieldHeroById(id);
         unitToMove.Move(x, y);
+    }
+
+    public void Attack(int id, int spellId, int x, int y)
+    {
+        var caster = battleMap.GetFieldHeroById(id);
+        caster.Attack(spellId, x, y);
     }
 
     public void SpawnUnit(Hero hero)
@@ -314,7 +321,9 @@ public class BattleManager : MonoBehaviour
             int i = 1;
             foreach (var spell in selectedHero.hero.playerHero.spellData)
             {
-                actionBar.transform.Find("SelectedHeroInfo/Spells/Slot" + i).GetComponent<SkillBtn>().ChangeBtn(spell);
+                var slot = actionBar.transform.Find("SelectedHeroInfo/Spells/Slot" + i);
+                SkillBtn btn = slot.GetComponent<SkillBtn>();
+                btn.ChangeBtn(spell);
             }
         }
     }
@@ -322,7 +331,7 @@ public class BattleManager : MonoBehaviour
     void clickEvent()
     {
         var mousePos = battleMap.GetTilePos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        if (Input.GetMouseButtonDown(0) && battleMap.IsInMap(mousePos.x, mousePos.y) && currentState != TileObjState.Pending)
+        if (Input.GetMouseButtonUp(0) && battleMap.IsInMap(mousePos.x, mousePos.y) && currentState != TileObjState.Pending)
         {
             switch (state)
             {
@@ -350,7 +359,7 @@ public class BattleManager : MonoBehaviour
                                 {
                                     if (battleMap._attackingTiles.Contains(mousePos))
                                     {
-                                        //selectedHero.SpellPreview();
+                                        selectedHero.AttackReq(activeSpell.ID, mousePos.x, mousePos.y);
                                     }
                                     else
                                     {

@@ -1,4 +1,5 @@
 ﻿using SyndriaServer.Enums;
+using SyndriaServer.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace SyndriaServer.Models.FightData
         public SpellPattern rangePattern;
         public SpellPattern attackPattern;
         public int range;
-        public Spell spellScript;
+        public ISpell spellScript;
+        
     }
 }

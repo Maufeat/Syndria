@@ -124,6 +124,7 @@ namespace SyndriaServer.Models
                 HeroObject _enemy = new HeroObject()
                 {
                     ID = (units[TeamID.RED].Count + 1),
+                    Name = "Scarecrow",
                     location = new Vector2(enemy.x, enemy.y),
                     baseHero = GameLogic.heroes[enemy.baseHeroId],
                     IsDead = false,
@@ -182,6 +183,27 @@ namespace SyndriaServer.Models
         public void MoveHero(int id, int _x, int _y)
         {
             MoveHero(GetHeroObjectById(id), _x, _y);
+        }
+
+        public void Attack(int charId, int spellId, int _x, int _y)
+        {
+            Attack(GetHeroObjectById(charId), spellId, _x, _y);
+        }
+
+        public void Attack(HeroObject hero, int spellId, int _x, int _y)
+        {
+            var spellUsed = GameLogic.spells[spellId];
+            var location = map.cells[_x, _y].coordinate;
+            var attackedTiles = map.GetTilesByPattern(location, spellUsed.attackPattern);
+
+            // Notify Player that a spell is used.
+            spellUsed.spellScript.caster = hero;
+            ServerSend.Attack(players, hero.ID, spellId, _x, _y);
+
+            // Execute SpellScript, e.g. dmg/heal unit etc.
+            spellUsed.spellScript.Cast(this, location, attackedTiles);
+
+            Logger.Write($"Character used Spell at: {_x} / {_y}");
         }
     }
 }

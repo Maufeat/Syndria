@@ -10,12 +10,11 @@ namespace Assets.Scripts.Interface.Battle
 {
     public interface ISpell
     {
-        FieldHero caster { get; set; }
         int cooldown { get; set; }
         Vector2 location { get; set; }
-        // TODO: SpellData 
+        SpellData spellData { get; set; }
         
-        bool Cast(Vector2 location, FieldHero target);
+        bool Cast(Vector2 location, List<Tile> target);
         IEnumerator SpellAnimation();
     }
 }

@@ -90,9 +90,20 @@ namespace SyndriaServer.Utils.Network
             Logger.Write($"Added Character {heroToPlace.ID} to Location: {heroToPlace.location.X}/{heroToPlace.location.Y}");
         }
 
-        public static void Attack(int _fromClient, Packet packet)
+        public static void Attack(int _fromClient, Packet _packet)
         {
+            var client = Server.clients[_fromClient];
+            if (client.currentFight == null)
+                return;
 
+            int id = _packet.ReadInt();
+            int sId = _packet.ReadInt();
+            int x = _packet.ReadInt();
+            int y = _packet.ReadInt();
+
+            client.currentFight.Attack(id, sId, x, y);
+
+            Logger.Write($"Unit {id} moved to {x}/{y}");
         }
 
         public static void ChangeReadyState(int _fromClient, Packet _packet)

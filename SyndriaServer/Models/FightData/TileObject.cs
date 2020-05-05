@@ -8,11 +8,13 @@ namespace SyndriaServer.Models.FightData
     {
         public int ID { get; set; }
 
+        public string Name { get; set; }
+
         public TeamID Team { get; set; }
 
         public Vector2 location { get; set; }
 
-        public bool walkable { get; }
+        public bool walkable { get; set; }
 
         public void Trigger()
         {

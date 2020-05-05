@@ -134,4 +134,24 @@ public class ClientHandle : MonoBehaviour
             BattleManager.Instance.MoveUnit(_id, _location_x, _location_y);
         }
     }
+
+    public static void Attack(Packet _packet)
+    {
+        /*
+                _packet.Write(_id);
+                _packet.Write(_spellId);
+                _packet.Write(_x);
+                _packet.Write(_y);
+        */
+
+        if (BattleManager.Instance != null)
+        {
+            int _id = _packet.ReadInt();
+            int _spellId = _packet.ReadInt();
+            int _location_x = _packet.ReadInt();
+            int _location_y = _packet.ReadInt();
+
+            BattleManager.Instance.Attack(_id, _spellId, _location_x, _location_y);
+        }
+    }
 }

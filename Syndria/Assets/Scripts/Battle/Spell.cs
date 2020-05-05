@@ -9,25 +9,21 @@ using UnityEngine;
 
 namespace Assets.Scripts.Battle
 {
-    public class Spell : ISpell
+    public class Spell : MonoBehaviour, ISpell
     {
-        public FieldHero caster { get; set; }
+        public int id { get; set; }
         public int cooldown { get; set; }
         public Vector2 location { get; set; }
-
-        public Spell(FieldHero _caster)
-        {
-            caster = _caster;
-        }
+        public SpellData spellData { get; set; }
 
         // Target can be null, because not every spell is targeted
-        public virtual bool Cast(Vector2 location, FieldHero target = null)
+        public virtual bool Cast(Vector2 location, List<Tile> aoe)
         {
             Debug.Log("Scripts.Battle.Spell::Cast");
             return true;
         }
 
-        public IEnumerator SpellAnimation()
+        public virtual IEnumerator SpellAnimation()
         {
             Debug.Log("Scripts.Battle.Spell::SpellAnimation");
             yield return new WaitForSeconds(0.2f);

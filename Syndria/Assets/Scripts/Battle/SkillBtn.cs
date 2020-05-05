@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Battle;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,18 +10,18 @@ public class SkillBtn : MonoBehaviour
     public TMPro.TextMeshProUGUI spellName;
     public Image spellTexture;
 
-    public SpellData data;
+    public SpellData spell;
 
     public void ChangeBtn(SpellData _data)
     {
-        data = _data;
+        spell = _data;
         spellName.text = _data.Name;
         spellTexture.sprite = _data.sprite;
 
         btn.onClick.RemoveAllListeners();
         btn.onClick.AddListener(() =>
         {
-            BattleManager.Instance.selectedHero.WantToAttack(data);
+            BattleManager.Instance.selectedHero.WantToAttack(spell);
         });
     }
 
