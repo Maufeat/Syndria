@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Models.Village;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,80 +7,48 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class Village : UIPanel
-{
-    public GameObject grid;
-    public Tilemap ground;
-    public TilemapCollider2D groundCollider;
-
-    public TileBase test1;
-    public TileBase test2;
-
+{    
     private float camVertExtent;
     private float halfWidth;
 
-    private Vector2 startPos;
-    private Vector2 cameraStartPos;
-    private bool slides;
-    private float lastDiffSmoothing = 0f;
+    // Camera Drag
+    Vector3 hit_position = Vector3.zero;
+    Vector3 current_position = Vector3.zero;
+    Vector3 camera_position = Vector3.zero;
 
     void Start()
     {
         keepOnDispose = true;
-        //StartCoroutine(NetworkManager.Instance.DownloadImage(NetworkManager.Instance.fbPic, GameObject.Find("ProfilePicture").GetComponent<Image>()));
-        //GameObject.Find("NameLbl").GetComponent<TMPro.TextMeshProUGUI>().text = NetworkManager.Instance.me.Username;
-        //GameObject.Find("SocialNameLbl").GetComponent<TMPro.TextMeshProUGUI>().text = "aka " + NetworkManager.Instance.fbName;
-        //GameObject.Find("LevelLbl").GetComponent<TMPro.TextMeshProUGUI>().text = "Lv. " + NetworkManager.Instance.me.level.ToString();
-        
-        //var discordBtn = GameObject.Find("DiscordBtn").GetComponent<Button>();
-        //discordBtn.GetComponent<Button>().onClick.AddListener(delegate { StaticTestScript.OpenDiscordUrl(); });
-        
-        var fightBtn = GameObject.Find("Button (2)").GetComponent<Button>();
-        fightBtn.GetComponent<Button>().onClick.AddListener(delegate {
-            UIManager.instance.OpenPanel("UIHeroes");
-        });
-        
+
+        VillageManager.Instance.Init(10);
+
+        //SNAP
         camVertExtent = Camera.main.orthographicSize;
         halfWidth = camVertExtent * Screen.width / Screen.height;
-        grid.transform.position = new Vector3(groundCollider.bounds.min.x - halfWidth, -5, transform.position.z);
-    
-        for (int x = 0; x < 111; x++)
-        {
-            for (int y = 0; y > -5; y--)
-            {
-                Tile newTile = new Tile(x, y);
-                if (y == 0)
-                {
-                    SetTile(ground, newTile.coordinate, test1);
-                } else
-                {
-                    SetTile(ground, newTile.coordinate, test2);
-                }
-            }
-        }
+        Camera.main.transform.position = new Vector3(VillageManager.Instance.groundCollider.bounds.min.x - halfWidth + 0.01f, 0, transform.position.z);
     }
 
-    public void SetTile(Tilemap layer, Vector2Int pos, TileBase tile)
+    public void LateUpdate()
     {
-        Vector3Int location = new Vector3Int(pos.x, pos.y, 0);
-        layer.SetTileFlags(location, TileFlags.None);
-        layer.SetTile(location, tile);
-    }
-
-    public void Update()
-    {
-        /*if (EventSystem.current.IsPointerOverGameObject())
+        if (VillageManager.Instance.blockGroundDrag)
             return;
 
         if (Input.GetMouseButtonDown(0))
         {
-            var deltaPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            Vector3 newPosition = deltaPosition;
-            newPosition.z = -5;
+            hit_position = Input.mousePosition;
+            camera_position = Camera.main.transform.position;
+        }
+       
+        if (Input.GetMouseButton(0))
+        {
+            var deltaPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y) - hit_position;
+            Vector3 newPosition = camera_position - deltaPosition * 0.02f;
+            newPosition.z = 0;
             newPosition.y = 0;
+            Camera.main.transform.position = newPosition;
+        }
 
-            float clampedX = Mathf.Clamp(newPosition.x, groundCollider.bounds.min.x + halfWidth + 0.01f, groundCollider.bounds.max.x - halfWidth - 0.01f);
-            grid.transform.position = new Vector3(clampedX, 0, grid.transform.position.z);
-        }*/
+        float clampedX = Mathf.Clamp(Camera.main.transform.position.x, VillageManager.Instance.groundCollider.bounds.min.x + halfWidth + 0.01f, VillageManager.Instance.groundCollider.bounds.max.x - halfWidth - 0.01f);
+        Camera.main.transform.position = new Vector3(clampedX, 0, 0);
     }
-
 }

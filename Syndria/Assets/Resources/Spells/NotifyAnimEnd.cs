@@ -14,7 +14,7 @@ public class NotifyAnimEnd : MonoBehaviour
     private IEnumerator Destroy()
     {
         yield return new WaitForSeconds(AnimationDuration);
-        Debug.Log("DESTORY");
+        Debug.Log("DESTORYED ANIM");
         Destroy(this.transform.gameObject);
     }
 

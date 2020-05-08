@@ -73,6 +73,11 @@ public class BattleManager : MonoBehaviour
         ClientSend.ClientLoaded();
     }
 
+    public void EndGame()
+    {
+        // TOOD: Destory BattleManager, Go to Previous Screen or Village.
+    }
+
     public void EndTurn()
     {
         if (state == ActionState.Preparation)
