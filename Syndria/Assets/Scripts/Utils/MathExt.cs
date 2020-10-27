@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 
 public static class MathExt
 {

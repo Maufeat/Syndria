@@ -11,23 +11,24 @@ public class ClientHandle : MonoBehaviour
         int _myId = _packet.ReadInt();
 
         Debug.Log($"Message from server: {_msg}");
-        Client.instance.myId = _myId;
-        Client.instance.me = new Player();
+        Client.Instance.myId = _myId;
+        Client.Instance.me = new Player();
 
         ClientSend.WelcomeReceived();
     }
 
     public static void UpdateUserData(Packet _packet)
     {
-        Client.instance.me.Username = _packet.ReadString();
-        Client.instance.me.level = _packet.ReadInt();
-        Client.instance.me.exp = _packet.ReadInt();
-        Client.instance.me.energy = _packet.ReadInt();
-        Client.instance.me.gold = _packet.ReadInt();
-        Client.instance.me.diamonds = _packet.ReadInt();
-        Client.instance.me.dailyCount = _packet.ReadInt();
+        Client.Instance.me.Username = _packet.ReadString();
+        Client.Instance.me.level = _packet.ReadInt();
+        Client.Instance.me.exp = _packet.ReadInt();
+        Client.Instance.me.energy = _packet.ReadInt();
+        Client.Instance.me.gold = _packet.ReadInt();
+        Client.Instance.me.diamonds = _packet.ReadInt();
+        Client.Instance.me.dailyCount = _packet.ReadInt();
+        Client.Instance.me.ParseInventoryString(_packet.ReadString());
 
-        Client.instance.me.heroes = new List<PlayerHero>();
+        Client.Instance.me.heroes = new List<PlayerHero>();
         var heroCount = _packet.ReadInt();
         for (int i = 0; i < heroCount; i++)
         {
@@ -45,34 +46,34 @@ public class ClientHandle : MonoBehaviour
             p.spellData = new List<SpellData>();
             p.spellData.Add(Resources.Load<SpellData>("Spells/Data/1"));
             p.baseHeroData = Resources.Load<HeroData>($"Characters/{heroId}/data");
-            Client.instance.me.heroes.Add(p);
+            Client.Instance.me.heroes.Add(p);
         }
     }
 
     public static void CreateCharacter(Packet _packet)
     {
-        UIManager.instance.CloseAllPanel();
-        UIManager.instance.CloseLoadingBox();
-        UIManager.instance.OpenPanel("UICreateCharacter", true);
+        UIManager.Instance.CloseAllPanel();
+        UIManager.Instance.CloseLoadingBox();
+        UIManager.Instance.OpenPanel("UICreateCharacter", true);
     }
 
     public static void GoToTutorial(Packet _packet)
     {
-        UIManager.instance.CloseAllPanel();
-        UIManager.instance.CloseLoadingBox();
-        UIManager.instance.OpenPanel("Battlefield", true);
+        UIManager.Instance.CloseAllPanel();
+        UIManager.Instance.CloseLoadingBox();
+        UIManager.Instance.OpenPanel("Battlefield", true);
     }
 
     public static void GoToVillage(Packet _packet)
     {
-        UIManager.instance.CloseAllPanel(true);
-        UIManager.instance.CloseLoadingBox();
-        UIManager.instance.OpenPanel("UIVillage", true);
+        UIManager.Instance.CloseAllPanel(true);
+        UIManager.Instance.CloseLoadingBox();
+        UIManager.Instance.OpenPanel("UIVillage", true);
     }
 
     public static void OpenMessageBox(Packet _packet)
     {
-        UIManager.instance.OpenMsgBox(_packet.ReadString());
+        UIManager.Instance.OpenMsgBox(_packet.ReadString());
     }
 
     public static void ChangeTurn(Packet _packet)
@@ -132,6 +133,20 @@ public class ClientHandle : MonoBehaviour
             int _location_y = _packet.ReadInt();
 
             BattleManager.Instance.MoveUnit(_id, _location_x, _location_y);
+        }
+    }
+
+    public static void StartFight(Packet _packet)
+    {
+        if(BattleManager.Instance == null)
+        {
+            int mapId = _packet.ReadInt();
+
+            Debug.Log($"RCV Started Fight MapID {mapId}");
+
+            UIManager.Instance.CloseAllPanel(true);
+            UIManager.Instance.CloseLoadingBox();
+            UIManager.Instance.OpenPanel("Battlefield", true);
         }
     }
 

@@ -278,7 +278,7 @@ public class BattleManager : MonoBehaviour
             ClientSend.ChangeReadyState(ready);
         });
 
-        foreach (var hero in Client.instance.me.heroes)
+        foreach (var hero in Client.Instance.me.heroes)
         {
             var heroListItem = Instantiate(Resources.Load("Prefabs/UI/Misc/HeroListItem"), heroList.transform) as GameObject;
             heroListItem.GetComponent<PrepHeroItem>().hero = hero;

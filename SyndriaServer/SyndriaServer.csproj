@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\ActionState.cs" />
+    <Compile Include="Enums\ItemType.cs" />
     <Compile Include="Enums\Rarity.cs" />
     <Compile Include="Enums\TeamID.cs" />
     <Compile Include="Enums\UnitState.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="GameLogic.cs" />
     <Compile Include="Interface\IAiObject.cs" />
     <Compile Include="Interface\IAttackableObject.cs" />
+    <Compile Include="Interface\IItem.cs" />
     <Compile Include="Interface\ISpell.cs" />
     <Compile Include="Interface\IStat.cs" />
     <Compile Include="Interface\IStatModifier.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="Models\FightData\SpellPattern.cs" />
     <Compile Include="Models\FightData\TileObject.cs" />
     <Compile Include="Models\HeroData.cs" />
+    <Compile Include="Models\ItemData.cs" />
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\MapData\MapData.cs" />
     <Compile Include="Models\PlayerData\PlayerHeroData.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="Models\Fight.cs" />
     <Compile Include="Enums\SpellEffect.cs" />
     <Compile Include="Models\Tile.cs" />
+    <Compile Include="Scripts\Items\TestItem.cs" />
     <Compile Include="Scripts\Spells\Detonation.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DatabaseManager.cs" />

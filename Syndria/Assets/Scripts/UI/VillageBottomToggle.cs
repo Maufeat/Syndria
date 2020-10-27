@@ -8,6 +8,9 @@ public class VillageBottomToggle : MonoBehaviour
     public GameObject layoutGroup;
 
     public Button shopBtn;
+    public Button heroBtn;
+    public Button inventoryBtn;
+    public Button storyBtn;
 
     public TMPro.TextMeshProUGUI closeText;
 
@@ -20,7 +23,22 @@ public class VillageBottomToggle : MonoBehaviour
 
         shopBtn.onClick.AddListener(() =>
         {
-            UIManager.instance.OpenPanel("UIShop");
+            UIManager.Instance.OpenPanel("UIShop");
+        });
+
+        heroBtn.onClick.AddListener(() =>
+        {
+            UIManager.Instance.OpenPanel("UIHeroes");
+        });
+
+        inventoryBtn.onClick.AddListener(() =>
+        {
+            UIManager.Instance.OpenPanel("UIInventory");
+        });
+
+        storyBtn.onClick.AddListener(() =>
+        {
+            UIManager.Instance.OpenPanel("UIStory");
         });
     }
     

@@ -22,6 +22,7 @@ namespace SyndriaServer
             GameLogic.LoadSpellPatterns();
             GameLogic.LoadSpells();
             GameLogic.LoadHeroBase();
+            GameLogic.LoadItems();
             GameLogic.LoadAllMaps();
 
             isRunning = true;

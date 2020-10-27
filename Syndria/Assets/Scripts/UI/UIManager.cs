@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager instance;
+    public static UIManager Instance;
 
     public GameObject uiLogin;
 
@@ -16,9 +16,9 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else { Destroy(gameObject); }
@@ -34,7 +34,7 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public void OpenPanel(string name, bool isMain = false)
+    public GameObject OpenPanel(string name, bool isMain = false)
     {
         var panel = Resources.Load("Prefabs/UI/" + name) as GameObject;
         var obj = Instantiate(panel, gameObject.transform);
@@ -44,6 +44,13 @@ public class UIManager : MonoBehaviour
             if (currentMain != null) currentMain.Close();
             currentMain = obj.GetComponent<UIPanel>();
         }
+
+        if (obj.GetComponent<UIPanel>() != null)
+        {
+            openPanels.Add(obj.GetComponent<UIPanel>());
+        }
+
+        return obj;
     }
 
     public LoadingBox OpenLoadingBox(string txt)
@@ -80,9 +87,12 @@ public class UIManager : MonoBehaviour
 
     public void CloseAllPanel(bool forceAll = false)
     {
-        foreach(var panel in openPanels)
+        foreach(var panel in openPanels.ToArray())
         {
-            if (panel.keepOnDispose && !forceAll) continue;
+            if(!forceAll)
+                if (panel.keepOnDispose)
+                    continue;
+
             panel.Close();
             openPanels.Remove(panel);
         }

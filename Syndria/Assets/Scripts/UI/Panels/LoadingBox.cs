@@ -13,14 +13,14 @@ public class LoadingBox : UIPanel
         loadingTxt = GameObject.Find("LoadingText").GetComponent<TMPro.TextMeshProUGUI>();
         loadingDescription.text = context;
 
-        UIManager.instance.currentLoadingBox = this;
+        UIManager.Instance.currentLoadingBox = this;
 
         StartCoroutine(this.Pulse());
     }
 
     public void SetText(string txt)
     {
-        if (UIManager.instance.currentLoadingBox != null)
+        if (UIManager.Instance.currentLoadingBox != null)
             loadingDescription.text = txt;
         else
             context = txt;

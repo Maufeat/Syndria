@@ -12,7 +12,7 @@ public class UIPanel : MonoBehaviour
     private float alpha = 0;
     public float FadeSpeed = 3;
 
-    public void Update()
+    public virtual void Update()
     {
         if (shouldFade)
             Fade();
@@ -31,6 +31,8 @@ public class UIPanel : MonoBehaviour
     
     public virtual void Close()
     {
+        if (UIManager.Instance.openPanels.Contains(this))
+            UIManager.Instance.openPanels.Remove(this);
         Destroy(gameObject);
     }
 

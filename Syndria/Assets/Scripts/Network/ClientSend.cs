@@ -7,7 +7,7 @@ public class ClientSend : MonoBehaviour
     private static void SendTCPData(Packet _packet)
     {
         _packet.WriteLength();
-        Client.instance.tcp.SendData(_packet);
+        Client.Instance.tcp.SendData(_packet);
     }
 
     #region Packets
@@ -15,7 +15,7 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)C2S.verifyAccessToken))
         {
-            _packet.Write(Client.instance.myId);
+            _packet.Write(Client.Instance.myId);
             _packet.Write(NetworkManager.Instance.FBAccessToken.TokenString);
 
             SendTCPData(_packet);
@@ -31,6 +31,18 @@ public class ClientSend : MonoBehaviour
             _packet.Write((int)hero.location.y);
 
             Debug.Log($"Set Figure ID {hero.ID} to {hero.location.x}/{hero.location.y}");
+
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void StartFight(int mapId)
+    {
+        using (Packet _packet = new Packet((int)C2S.startFight))
+        {
+            _packet.Write(mapId);
+
+            Debug.Log($"Started Fight MapID {mapId}");
 
             SendTCPData(_packet);
         }

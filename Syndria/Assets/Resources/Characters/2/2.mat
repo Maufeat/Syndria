@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 2
-  m_Shader: {fileID: -6465566751694194690, guid: 50ce6ef0388e7b14a9c1c52fec1833ac,
+  m_Shader: {fileID: -6465566751694194690, guid: 33477b6d5f826454188501bcce3b20f9,
     type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
@@ -40,7 +40,9 @@ Material:
     - _BlurAmount: 1.29
     - _EnableExternalAlpha: 0
     - _IsGray: 1
+    - _OutlineThickness: 2
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 1.0865755, g: 1.7151729, b: 0, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}

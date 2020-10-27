@@ -7,7 +7,7 @@ using System;
 
 public class Client : MonoBehaviour
 {
-    public static Client instance;
+    public static Client Instance;
     public static int dataBufferSize = 4096;
 
     public string ip = "192.168.178.192";
@@ -38,11 +38,11 @@ public class Client : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
-        else if (instance != this)
+        else if (Instance != this)
         {
             Debug.Log("Instance already exists, destroying object!");
             Destroy(this);
@@ -76,7 +76,7 @@ public class Client : MonoBehaviour
             };
 
             receiveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
+            socket.BeginConnect(Instance.ip, Instance.port, ConnectCallback, socket);
         }
 
         private void ConnectCallback(IAsyncResult _result)
@@ -117,7 +117,7 @@ public class Client : MonoBehaviour
                 int _byteLength = stream.EndRead(_result);
                 if (_byteLength <= 0)
                 {
-                    instance.Disconnect();
+                    Instance.Disconnect();
                     return;
                 }
 
@@ -181,7 +181,7 @@ public class Client : MonoBehaviour
 
         private void Disconnect()
         {
-            instance.Disconnect();
+            Instance.Disconnect();
 
             stream = null;
             receivedData = null;
@@ -206,6 +206,7 @@ public class Client : MonoBehaviour
             { (int)S2C.allLoaded, ClientHandle.AllLoaded },
             { (int)S2C.moveUnit, ClientHandle.MoveUnit },
             { (int)S2C.attack, ClientHandle.Attack },
+            { (int)S2C.startFight, ClientHandle.StartFight },
         };
 
         Debug.Log("Initialized packets.");

@@ -18,3 +18,4 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 4797f761e6959d343af2ed1268998810, type: 3}
   offset_x: -3.4
   offset_y: -5.79
+  text_offset_y: -3

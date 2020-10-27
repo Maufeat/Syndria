@@ -30,7 +30,7 @@ public class CreateCharacter : UIPanel
         this.keepOnDispose = true;
         createBtn = GameObject.Find("CreateBtn").GetComponent<Button>();
         createBtn.GetComponent<Button>().onClick.AddListener(delegate {
-            UIManager.instance.OpenLoadingBox("Creating Character...");
+            UIManager.Instance.OpenLoadingBox("Creating Character...");
             ClientSend.SendCreateCharacter(selectedCharacter, inputField.text);
 
             /*LittleEndianWriter writer = new LittleEndianWriter();

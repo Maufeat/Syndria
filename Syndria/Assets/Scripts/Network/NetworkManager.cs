@@ -54,10 +54,10 @@ public class NetworkManager : MonoBehaviour
     {
         FB.LogOut();
 
-        UIManager.instance.CloseAllPanel(true);
-        UIManager.instance.CloseLoadingBox();
-        UIManager.instance.OpenMsgBox("Disconnected.");
-        UIManager.instance.uiLogin.SetActive(true);
+        UIManager.Instance.CloseAllPanel(true);
+        UIManager.Instance.CloseLoadingBox();
+        UIManager.Instance.OpenMsgBox("Disconnected.");
+        UIManager.Instance.uiLogin.SetActive(true);
 
         Debug.Log("Disconnected");
     }
@@ -169,7 +169,7 @@ public class NetworkManager : MonoBehaviour
 
         if (IsClicked)
         {
-            UIManager.instance.OpenLoadingBox("Connecting to Facebook...");
+            UIManager.Instance.OpenLoadingBox("Connecting to Facebook...");
             FB.LogInWithReadPermissions(fbPerms, OnLoggedIn);
         }
     }
@@ -233,9 +233,9 @@ public class NetworkManager : MonoBehaviour
     {
         if (_FbUserResp.Error == null)
         {
-            UIManager.instance.uiLogin.SetActive(false);
+            UIManager.Instance.uiLogin.SetActive(false);
 
-            UIManager.instance.OpenLoadingBox("Connecting to Game Server...");
+            UIManager.Instance.OpenLoadingBox("Connecting to Game Server...");
 
             IDictionary picture = _FbUserResp.ResultDictionary["picture"] as IDictionary;
             IDictionary data = picture["data"] as IDictionary;
@@ -245,7 +245,7 @@ public class NetworkManager : MonoBehaviour
             //GameObject.Find("Debug/Text").GetComponent<TMPro.TextMeshProUGUI>().text = _FbUserResp.ResultDictionary["name"].ToString();
             //StartCoroutine(DownloadImage(data["url"] as String));
 
-            Client.instance.ConnectToServer();
+            Client.Instance.ConnectToServer();
 
             //StartCoroutine(ServerManager.Instance.LogIn(myFbId, myName, myEmail));
         }
@@ -277,8 +277,8 @@ public class NetworkManager : MonoBehaviour
         }
         else if (IsError)
         {
-            UIManager.instance.CloseLoadingBox();
-            UIManager.instance.OpenMsgBox(_msg);
+            UIManager.Instance.CloseLoadingBox();
+            UIManager.Instance.OpenMsgBox(_msg);
             Debug.LogError("<facebook> " + _msg);
         }
         else

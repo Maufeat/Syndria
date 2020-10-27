@@ -12,13 +12,15 @@ public enum S2C
     spawnUnit,
     allLoaded,
     moveUnit,
-    attack
+    attack,
+    startFight
 }
 
 public enum C2S
 {
     verifyAccessToken = 1,
     createCharacter,
+    startFight,
     setPrepCharacter = 50,
     changeReadyState,
     battlefieldLoaded,

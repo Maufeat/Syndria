@@ -10,10 +10,4 @@ public class Login : UIPanel
         AudioManager.Instance.PlayMusic(Resources.Load<AudioClip>("Sounds/BGM/bgm_sakura"));
         AudioManager.Instance.SetMusicVolume(0.5f);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

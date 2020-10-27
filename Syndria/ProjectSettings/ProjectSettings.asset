@@ -256,7 +256,7 @@ PlayerSettings:
   clonedFromGUID: c0afd0d1d80e3634a9dac47e8a0426ea
   templatePackageId: com.unity.template.3d@1.3.0
   templateDefaultScene: Assets/Scenes/SampleScene.unity
-  AndroidTargetArchitectures: 5
+  AndroidTargetArchitectures: 1
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: '{inproject}: user.keystore'
@@ -444,7 +444,9 @@ PlayerSettings:
     Android: 1
     iPhone: 1
     tvOS: 1
-  m_BuildTargetGroupLightmapEncodingQuality: []
+  m_BuildTargetGroupLightmapEncodingQuality:
+  - m_BuildTarget: Android
+    m_EncodingQuality: 0
   m_BuildTargetGroupLightmapSettings: []
   playModeTestRunnerEnabled: 0
   runPlayModeTestAsEditModeTest: 0

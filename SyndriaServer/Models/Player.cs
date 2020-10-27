@@ -30,9 +30,44 @@ namespace SyndriaServer
         public int tutorialDone { get; set; }
 
         public List<PlayerHeroData> heroes { get; set; }
+        public List<ItemData> items = new List<ItemData>();
 
         public Player()
         {
+        }
+
+        public void ParseInventoryString(string inventoryString)
+        {
+            //split into itemId,Qty
+            string[] inventorySplit = inventoryString.Split(';');
+            foreach(var itemStack in inventorySplit)
+            {
+                var itemStackSplit = itemStack.Split(',');
+
+                var itemId = itemStackSplit[0];
+                var itemQty = itemStackSplit[1];
+
+                var item = GameLogic.items[Convert.ToInt32(itemId)];
+                item.Quantity = Convert.ToInt32(itemQty);
+
+                items.Add(item);
+            }
+        }
+
+        public string InventoryToString()
+        {
+            StringBuilder str = new StringBuilder();
+            bool isFirst = true;
+            foreach (var item in items)
+            {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    str.Append(";");
+
+                str.Append($"{item.ID},{item.Quantity}");
+            }
+            return str.ToString();
         }
 
         public void GetUserData()

@@ -58,6 +58,7 @@ namespace SyndriaServer.Utils.Network
                 _packet.Write(_player.gold);
                 _packet.Write(_player.diamonds);
                 _packet.Write(_player.dailyCount);
+                _packet.Write(_player.InventoryToString());
 
                 _packet.Write(_player.heroes.Count);
                 foreach(var hero in _player.heroes)
@@ -94,6 +95,15 @@ namespace SyndriaServer.Utils.Network
             using (Packet _packet = new Packet((int)S2C.toTutorial))
             {
                 _packet.Write(_id);
+                SendTCPData(_toClient, _packet);
+            }
+        }
+
+        public static void StartFight(int _toClient, int _mapId)
+        {
+            using (Packet _packet = new Packet((int)S2C.startFight))
+            {
+                _packet.Write(_mapId);
                 SendTCPData(_toClient, _packet);
             }
         }

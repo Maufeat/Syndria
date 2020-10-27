@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: 2
   m_EditorClassIdentifier: 
   ID: 2
-  Name: Test
+  Name: Scroll House
   Description: Zdj
   Sprite: {fileID: 21300000, guid: df4dfad8c41824a47948afb1f4d8fffc, type: 3}
   offset_x: -6.92
   offset_y: -6.07
+  text_offset_y: -3.1

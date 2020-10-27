@@ -210,6 +210,7 @@ namespace SyndriaServer.Utils
                         p.lastUsedEnergy = row.Field<DateTime>("last_used_energy");
                         p.gold = row.Field<int>("gold");
                         p.diamonds = row.Field<int>("diamonds");
+                        p.ParseInventoryString(row.Field<string>("inventory"));
                     }
                     return true;
                 }

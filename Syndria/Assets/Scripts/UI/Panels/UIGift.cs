@@ -9,15 +9,11 @@ public class UIGift : UIPanel
     
     void Start()
     {
-        okBtn = transform.Find("Image/Button").GetComponent<Button>();
+        if(okBtn == null)
+            okBtn = transform.Find("Image/Button").GetComponent<Button>();
+
         okBtn.onClick.AddListener(() => {
             Close();
         });
-    }
-
-
-    void Update()
-    {
-        
     }
 }

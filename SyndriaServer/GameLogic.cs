@@ -3,6 +3,7 @@ using SyndriaServer.Enums;
 using SyndriaServer.Interface;
 using SyndriaServer.Models;
 using SyndriaServer.Models.FightData;
+using SyndriaServer.Scripts.Items;
 using SyndriaServer.Scripts.Spells;
 using SyndriaServer.Utils;
 using System;
@@ -15,11 +16,14 @@ namespace SyndriaServer
     public class GameLogic
     {
         public static Dictionary<int, ISpell> spellScripts = new Dictionary<int, ISpell>();
+        public static Dictionary<int, IItem> itemScripts = new Dictionary<int, IItem>();
         public static Dictionary<int, SpellPattern> spellPatterns = new Dictionary<int, SpellPattern>();
         public static Dictionary<int, SpellData> spells = new Dictionary<int, SpellData>();
         public static Dictionary<int, HeroData> heroes = new Dictionary<int, HeroData>();
+        public static Dictionary<int, ItemData> items = new Dictionary<int, ItemData>();
         public static Dictionary<int, MapData> maps = new Dictionary<int, MapData>();
         public static Dictionary<int, Fight> fights = new Dictionary<int, Fight>();
+        public static int fightIndex = 0;
 
         public static void Update()
         {
@@ -34,6 +38,11 @@ namespace SyndriaServer
         public static void LoadSpellScripts()
         {
             spellScripts.Add(1, new Detonation());
+        }
+
+        public static void LoadItemScripts()
+        {
+            itemScripts.Add(1, new TestItem());
         }
 
         public static void LoadSpellPatterns()
@@ -126,6 +135,21 @@ namespace SyndriaServer
             }
 
             Logger.Write($"Loaded {heroes.Count} Heroes");
+        }
+
+        public static void LoadItems()
+        {
+            LoadItemScripts();
+            string path = Directory.GetCurrentDirectory() + "/items";
+
+            foreach (string file in Directory.EnumerateFiles(path, "*.json"))
+            {
+                ItemData deserialize = JsonConvert.DeserializeObject<ItemData>(File.ReadAllText(file));
+                deserialize.ItemScript = itemScripts[deserialize.ScriptId];
+                items.Add(deserialize.ID, deserialize);
+            }
+
+            Logger.Write($"Loaded {items.Count} Items");
         }
 
         public static void LoadAllMaps()

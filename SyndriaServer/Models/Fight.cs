@@ -134,6 +134,7 @@ namespace SyndriaServer.Models
                 map.cells[(int)_enemy.location.X, (int)_enemy.location.Y].objectOnTile = _enemy;
             }
 
+            ServerSend.StartFight(players[0].id, mapData.id);
             //SetTimer();
         }
 

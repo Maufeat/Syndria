@@ -14,9 +14,4 @@ public class Shop : UIPanel
             Close();
         });  
     }
-
-    void Update()
-    {
-        
-    }
 }

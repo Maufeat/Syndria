@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace Assets.Scripts.Models.Village
@@ -11,6 +12,7 @@ namespace Assets.Scripts.Models.Village
         public VillageTile[] cells;
 
         public bool blockGroundDrag = false;
+        public bool dragging = false;
 
         public GameObject villageObject;
         public Tilemap ground;
@@ -20,6 +22,8 @@ namespace Assets.Scripts.Models.Village
 
         public float x_offset_multi = -6.45f;
         public float y_offset_multi = 2;
+
+        public List<Building> buildings;
 
         private void Awake()
         {
@@ -90,6 +94,11 @@ namespace Assets.Scripts.Models.Village
 
             cells[6].objectOnTile = buildingScript4;
             buildingScript4.RenderBuilding(cells[6].coordinate);
+
+            buildings.Add(buildingScript);
+            buildings.Add(buildingScript2);
+            buildings.Add(buildingScript3);
+            buildings.Add(buildingScript4);
         }
 
         public void SetTile(Tilemap layer, Vector2Int pos, TileBase tile)

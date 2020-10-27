@@ -15,8 +15,8 @@ MonoBehaviour:
   ID: 4
   Name: Meytei
   Description: No
-  Type: 2
-  BaseRarity: 4
+  Type: 1
+  BaseRarity: 2
   BaseStats: {fileID: 0}
   overwriteGameObject: {fileID: 4361388881380943478, guid: a87c0fd5f0a852a45832ae8e25cafed0,
     type: 3}

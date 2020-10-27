@@ -26,7 +26,7 @@ public class MessageBox : UIPanel
         if(actionOne != null)
             okButton.GetComponent<Button>().onClick.AddListener(actionOne);
         else
-            okButton.GetComponent<Button>().onClick.AddListener(delegate { UIManager.instance.ClosePanel(this); });
+            okButton.GetComponent<Button>().onClick.AddListener(delegate { UIManager.Instance.ClosePanel(this); });
         try
         {
             cancelButton = GameObject.Find("CancelBtn").GetComponent<Button>();
@@ -34,13 +34,13 @@ public class MessageBox : UIPanel
             if (actionTwo != null)
                 cancelButton.GetComponent<Button>().onClick.AddListener(actionTwo);
             else
-                cancelButton.GetComponent<Button>().onClick.AddListener(delegate { UIManager.instance.ClosePanel(this); });
+                cancelButton.GetComponent<Button>().onClick.AddListener(delegate { UIManager.Instance.ClosePanel(this); });
         } catch(Exception e) { Debug.Log(e.Message); }
         
         boxTxt = GameObject.Find("Context").GetComponent<TMPro.TextMeshProUGUI>();
         boxTxt.text = context;
 
-        UIManager.instance.OpenPanel(this);
+        UIManager.Instance.OpenPanel(this);
 
         if (actionTwo == null && cancelButton != null)
         {

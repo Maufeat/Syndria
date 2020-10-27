@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
 
 public class Player
 {
@@ -15,7 +17,8 @@ public class Player
     public int diamonds { get; set; }
 
     public List<PlayerHero> heroes { get; set; }
-    
+    public List<ItemData> items { get; set; }
+
     /*public void UpdatePlayerData(LittleEndianReader data)
     {
         Username = data.ReadSizedString();
@@ -24,4 +27,40 @@ public class Player
         gold = data.ReadInt();
         diamonds = data.ReadInt();
     }*/
+
+    public void ParseInventoryString(string inventoryString)
+    {
+        items = new List<ItemData>();
+        //split into itemId,Qty
+        string[] inventorySplit = inventoryString.Split(';');
+        foreach (var itemStack in inventorySplit)
+        {
+            var itemStackSplit = itemStack.Split(',');
+
+            var itemId = itemStackSplit[0];
+            var itemQty = itemStackSplit[1];
+            
+            var item = Resources.Load<ItemData>($"Items/{itemId}");
+            item.qty = Convert.ToInt32(itemQty);
+
+            items.Add(item);
+        }
+
+    }
+
+    public string InventoryToString()
+    {
+        StringBuilder str = new StringBuilder();
+        bool isFirst = true;
+        foreach (var item in items)
+        {
+            if (isFirst)
+                isFirst = false;
+            else
+                str.Append(";");
+
+            str.Append($"{item.ID},{item.qty}");
+        }
+        return str.ToString();
+    }
 }

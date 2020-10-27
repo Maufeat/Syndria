@@ -36,9 +36,9 @@ namespace SyndriaServer.Utils.Network
                     Logger.Write($"[<<][{_fromClient}] Update UserData {player.heroes.Count}");
 
                     // Send to Tutorial or Village;
-                    if (player.tutorialDone == 0)
+                    if (player.tutorialDone == 1)
                     {
-                        var id = GameLogic.fights.Count + 1;
+                        var id = GameLogic.fightIndex + 1;
                         ServerSend.GoToTutorial(_fromClient, id);
                         Logger.Write($"[<<][{_fromClient}] Send User To Tutorial");
                         // Hardcode Tutorial Map to ID 1
@@ -106,6 +106,18 @@ namespace SyndriaServer.Utils.Network
             Logger.Write($"Unit {id} moved to {x}/{y}");
         }
 
+        public static void StartFight(int _fromClient, Packet _packet)
+        {
+            var client = Server.clients[_fromClient];
+            if (client.currentFight != null)
+                return;
+
+            int mapId = _packet.ReadInt();
+
+            var id = GameLogic.fightIndex + 1;
+            GameLogic.fights.Add(id, new Fight(id, GameLogic.maps[mapId], _fromClient));
+        }
+
         public static void ChangeReadyState(int _fromClient, Packet _packet)
         {
             var client = Server.clients[_fromClient];
@@ -160,7 +172,7 @@ namespace SyndriaServer.Utils.Network
             player.UpdateHeroes();
             ServerSend.UserData(_fromClient, player);
 
-            var id = GameLogic.fights.Count() + 1;
+            var id = GameLogic.fightIndex + 1;
             ServerSend.GoToTutorial(_fromClient, id);
             GameLogic.fights.Add(id, new Fight(id, _fromClient));
         }

@@ -9,4 +9,5 @@ public class BuildingData: ScriptableObject
     public Sprite Sprite;
     public float offset_x;
     public float offset_y;
+    public float text_offset_y;
 }
