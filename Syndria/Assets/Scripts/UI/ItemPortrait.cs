@@ -13,7 +13,7 @@ public class ItemPortrait : MonoBehaviour
     public Image go_itemBorder;
     public TMPro.TextMeshProUGUI go_itemQuantity;
 
-    public HeroData heroData;
+    public HeroTemplate heroData;
     public ItemData itemData;
 
     public Button itemAction;
@@ -35,20 +35,20 @@ public class ItemPortrait : MonoBehaviour
 
     public void SetupPortraitAsHero(PlayerHero hero)
     {
-        heroData = hero.baseHeroData;
-        go_itemThumb.sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/thumb");
-        go_itemRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.baseHeroData.BaseRarity}");
-        go_itemType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.baseHeroData.Type}");
-        go_itemBorder.color = MathExt.getColorByRarity(hero.baseHeroData.BaseRarity);
+        heroData = hero.template;
+        go_itemThumb.sprite = Resources.Load<Sprite>($"Characters/{hero.template.id}/thumb");
+        go_itemRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.template.rarity}");
+        go_itemType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.template.type}");
+        go_itemBorder.color = MathExt.getColorByRarity(hero.template.rarity);
     }
 
-    public void SetupPortraitAsHero(HeroData hero)
+    public void SetupPortraitAsHero(HeroTemplate hero)
     {
         heroData = hero;
-        go_itemThumb.sprite = Resources.Load<Sprite>($"Characters/{hero.ID}/thumb");
-        go_itemRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.BaseRarity}");
-        go_itemType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.Type}");
-        go_itemBorder.color = MathExt.getColorByRarity(hero.BaseRarity);
+        go_itemThumb.sprite = Resources.Load<Sprite>($"Characters/{hero.id}/thumb");
+        go_itemRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.rarity}");
+        go_itemType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.type}");
+        go_itemBorder.color = MathExt.getColorByRarity(hero.rarity);
     }
 
     public void SetupPortraitAsItem(ItemData item)

@@ -8,6 +8,10 @@ public class UIManager : MonoBehaviour
 
     public GameObject uiLogin;
 
+    public GameObject mainLayer;
+    public GameObject chatLayer;
+    public GameObject popLayer;
+
     public UIPanel currentMain;
 
     public List<UIPanel> openPanels = new List<UIPanel>();
@@ -37,7 +41,7 @@ public class UIManager : MonoBehaviour
     public GameObject OpenPanel(string name, bool isMain = false)
     {
         var panel = Resources.Load("Prefabs/UI/" + name) as GameObject;
-        var obj = Instantiate(panel, gameObject.transform);
+        var obj = Instantiate(panel, mainLayer.transform);
         obj.name = panel.name;
         if (isMain)
         {
@@ -63,7 +67,7 @@ public class UIManager : MonoBehaviour
         {
             var panel = Resources.Load("Prefabs/UI/Loading") as GameObject;
             panel.GetComponent<LoadingBox>().SetText(txt);
-            var obj = Instantiate(panel, gameObject.transform);
+            var obj = Instantiate(panel, popLayer.transform);
             return null;
         }
     }
@@ -73,7 +77,7 @@ public class UIManager : MonoBehaviour
         var panel = Resources.Load("Prefabs/UI/MessageBox") as GameObject;
         panel.GetComponent<MessageBox>().SetText(txt);
         panel.GetComponent<MessageBox>().SetupBtnOne("OK");
-        var obj = Instantiate(panel, gameObject.transform);
+        var obj = Instantiate(panel, popLayer.transform);
     }
 
     public void CloseLoadingBox()
@@ -93,8 +97,11 @@ public class UIManager : MonoBehaviour
                 if (panel.keepOnDispose)
                     continue;
 
-            panel.Close();
-            openPanels.Remove(panel);
+            if (!(panel is MessageBox))
+            {
+                panel.Close();
+                openPanels.Remove(panel);
+            }
         }
     }
     

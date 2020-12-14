@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
+  m_Name: data_old
+  m_EditorClassIdentifier: 
+  ID: 3
+  Name: Mitsuki
+  Description: <Mitsuki>No Description
+  Type: 3
+  BaseRarity: 3
+  BaseStats: {fileID: 0}
+  overwriteGameObject: {fileID: 6406432427874470226, guid: b0f2818d81a6b7045ad3f3276e7dee59,
+    type: 3}

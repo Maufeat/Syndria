@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class UIPanel : MonoBehaviour
 {
+    public string prefabName;
+
     public bool shouldFade = false;
     public bool keepOnDispose = false;
 

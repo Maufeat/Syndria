@@ -1,146 +1,240 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class ClientHandle : MonoBehaviour
 {
-    public static void Welcome(Packet _packet)
+    public static void Welcome(string _packet)
     {
-        string _msg = _packet.ReadString();
-        int _myId = _packet.ReadInt();
-
-        Debug.Log($"Message from server: {_msg}");
-        Client.Instance.myId = _myId;
+        Debug.Log($"Message from server: {_packet}");
         Client.Instance.me = new Player();
 
-        ClientSend.WelcomeReceived();
+        var helloConnectPacket = new HelloConnect();
+#if UNITY_EDITOR
+        helloConnectPacket.google_id = "103466358977404530792";
+#else
+        helloConnectPacket.google_id = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken();
+#endif
+        helloConnectPacket.version = Client.Instance.v.ToString();
+        Client.Instance.Send(helloConnectPacket.Serialize());
     }
 
-    public static void UpdateUserData(Packet _packet)
+    public static void MessageBox(string _packet)
     {
-        Client.Instance.me.Username = _packet.ReadString();
-        Client.Instance.me.level = _packet.ReadInt();
-        Client.Instance.me.exp = _packet.ReadInt();
-        Client.Instance.me.energy = _packet.ReadInt();
-        Client.Instance.me.gold = _packet.ReadInt();
-        Client.Instance.me.diamonds = _packet.ReadInt();
-        Client.Instance.me.dailyCount = _packet.ReadInt();
-        Client.Instance.me.ParseInventoryString(_packet.ReadString());
+        var msgInfo = JObject.Parse(_packet);
+        if (msgInfo["lblId"].ToString() == "TID_LABEL_BETA")
+        {
+            UIManager.Instance.OpenPanel("TutorialBox");
+            return;
+        }
+        UIManager.Instance.CloseLoadingBox();
+        UIManager.Instance.OpenMsgBox(_packet);
+    }
+
+    public static void UpdateHeroList(string _packet)
+    {
+        var heroList = JObject.Parse(_packet)["heroes"];
 
         Client.Instance.me.heroes = new List<PlayerHero>();
-        var heroCount = _packet.ReadInt();
-        for (int i = 0; i < heroCount; i++)
+        foreach (var hero in heroList)
         {
-            var phId = _packet.ReadInt();
-            var heroId = _packet.ReadInt();
-            PlayerHero p = new PlayerHero()
+            PlayerHero _p = new PlayerHero()
             {
-                ID = phId,
-                level = _packet.ReadInt(),
-                xp = _packet.ReadInt(),
-                aptitude = _packet.ReadInt()
-                
+                id = Convert.ToInt32(hero["id"]),
+                template = Resources.Load<HeroTemplate>($"Characters/{Convert.ToInt32(hero["template_id"])}/data"),
+                owner_id = Convert.ToInt32(hero["owner_id"]),
+                level = Convert.ToInt32(hero["level"]),
+                xp = Convert.ToInt32(hero["xp"]),
+                hat = Convert.ToInt32(hero["hat"]),
+                cape = Convert.ToInt32(hero["cape"]),
+                amulett = Convert.ToInt32(hero["amulett"]),
+                shoes = Convert.ToInt32(hero["shoes"]),
+                spellData = new SpellData[4]
+                {
+                    (Convert.ToInt32(hero["spell1"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{Convert.ToInt32(hero["spell1"])}") : null,
+                    (Convert.ToInt32(hero["spell2"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{Convert.ToInt32(hero["spell2"])}") : null,
+                    (Convert.ToInt32(hero["spell3"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{Convert.ToInt32(hero["spell3"])}") : null,
+                    (Convert.ToInt32(hero["spell4"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{Convert.ToInt32(hero["spell4"])}") : null,
+                }
             };
-            //Give player a Skill.
-            p.spellData = new List<SpellData>();
-            p.spellData.Add(Resources.Load<SpellData>("Spells/Data/1"));
-            p.baseHeroData = Resources.Load<HeroData>($"Characters/{heroId}/data");
-            Client.Instance.me.heroes.Add(p);
+            Client.Instance.me.heroes.Add(_p);
+        }
+        Debug.LogError("Updated Hero List");
+    }
+
+    public static void GameStateLoaded(string _packet)
+    {
+        if (BattleManager.Instance != null)
+        {
+            var state = Convert.ToInt32(JObject.Parse(_packet)["state"]);
+            if (state == 1)
+                BattleManager.Instance.AllLoaded();
         }
     }
 
-    public static void CreateCharacter(Packet _packet)
+    public static void SetPrepChar(string _packet)
+    {
+        if (BattleManager.Instance != null)
+        {
+            var packetData = JObject.Parse(_packet);
+            var _id = Convert.ToInt32(packetData["hero_id"]);
+            var _location_x = Convert.ToInt32(packetData["x"]);
+            var _location_y = Convert.ToInt32(packetData["y"]);
+
+            BattleManager.Instance.GetSetPrepHero(_id, _location_x, _location_y);
+        }
+    }
+
+    public static void UpdateUserData(string _packet)
+    {
+        var dynamicShit = JObject.Parse(_packet)["account"];
+        var newPlayer = new Player() { 
+            id = Convert.ToInt32(dynamicShit["id"]),
+            google_id = Convert.ToString(dynamicShit["google_id"]),
+            nickname = Convert.ToString(dynamicShit["nickname"]),
+            level = Convert.ToInt32(dynamicShit["level"]),
+            exp = Convert.ToInt32(dynamicShit["xp"])
+        };
+        Client.Instance.me = newPlayer;
+        Debug.Log(Client.Instance.me.nickname);
+    }
+
+    public static void UpdateHeroFormation(string _packet)
+    {
+        Debug.Log(_packet);
+        Client.Instance.me.currentFormation.InitByPacketString(_packet);
+    } 
+
+    public static void UpdateServerConfig(string _packet)
+    {
+        var configs = JObject.Parse(_packet);
+        // xpTable
+        JArray tables = (JArray)configs["xpTables"];
+        Client.Instance.me.experienceTable = new int[tables.Count + 1];
+        Debug.Log(tables.Count);
+        int i = 0;
+        foreach (var xp in tables)
+        {
+            Client.Instance.me.experienceTable[i] = Convert.ToInt32(xp);
+            Debug.LogError($"Added {Client.Instance.me.experienceTable[i]} exp tables");
+            i++;
+        }
+    }
+
+    public static void CreateCharacter(string _packet)
     {
         UIManager.Instance.CloseAllPanel();
         UIManager.Instance.CloseLoadingBox();
+
+        var configs = JObject.Parse(_packet);
+        JArray heroes = (JArray)configs["heroes"];
+        Client.Instance.availableCreateCharacter = new int[heroes.Count];
+
+        for (int i = 0; i < heroes.Count; i++)
+        {
+            Client.Instance.availableCreateCharacter[i] = Convert.ToInt32(heroes[i]);
+        }
+
         UIManager.Instance.OpenPanel("UICreateCharacter", true);
     }
 
-    public static void GoToTutorial(Packet _packet)
+    public static void GoToTutorial(string _packet)
     {
         UIManager.Instance.CloseAllPanel();
         UIManager.Instance.CloseLoadingBox();
         UIManager.Instance.OpenPanel("Battlefield", true);
     }
 
-    public static void GoToVillage(Packet _packet)
+    public static void GoToVillage(string _packet)
     {
         UIManager.Instance.CloseAllPanel(true);
         UIManager.Instance.CloseLoadingBox();
         UIManager.Instance.OpenPanel("UIVillage", true);
     }
 
-    public static void OpenMessageBox(Packet _packet)
+    public static void OpenMessageBox(string _packet)
     {
-        UIManager.Instance.OpenMsgBox(_packet.ReadString());
+        ///UIManager.Instance.OpenMsgBox(_packet.ReadString());
     }
 
-    public static void ChangeTurn(Packet _packet)
+    public static void ChangeTurn(string _packet)
     {
         if (BattleManager.Instance != null)
         {
-            BattleManager.Instance.EndTurn();
+            var turnParams = JObject.Parse(_packet);
+            BattleManager.Instance.EndTurn(Convert.ToInt32(turnParams["turnTime"]));
         }
     }
 
-    public static void ChangeReadyState(Packet _packet)
+    public static void ChangeReadyState(string _packet)
     {
         if (BattleManager.Instance != null)
         {
-            var ready = _packet.ReadBool();
+            var ready = Convert.ToBoolean(JObject.Parse(_packet)["ready"]);
             BattleManager.Instance.ChangeReadyState(ready);
         }
     }
 
-    public static void AllLoaded(Packet _packet)
+    public static void AllLoaded(string _packet)
     {
-        if(BattleManager.Instance != null)
+        if (BattleManager.Instance != null)
         {
             BattleManager.Instance.AllLoaded();
         }
     }
 
-
-    public static void SpawnUnit(Packet _packet)
+    public static void SpawnUnit(string _packet)
     {
         if (BattleManager.Instance != null)
         {
-            int _id = _packet.ReadInt();
-            int _heroId = _packet.ReadInt();
-            TeamID _teamId = (TeamID)_packet.ReadInt();
-            int _location_x = _packet.ReadInt();
-            int _location_y = _packet.ReadInt();
+            var packet = JObject.Parse(_packet);
+            var playerHero = new PlayerHero()
+            {
+                id = Convert.ToInt32(packet["hero_info"]["id"]),
+                owner_id = Convert.ToInt32(packet["hero_info"]["owner_id"]),
+                template = Resources.Load<HeroTemplate>($"Characters/{ packet["hero_info"]["template"] }/data"),
+                level = Convert.ToInt32(packet["hero_info"]["level"]),
+                spellData = new SpellData[4]
+                {
+                    (Convert.ToInt32(packet["hero_info"]["spells"]["1"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{packet["hero_info"]["spells"]["1"]}") : null,
+                    (Convert.ToInt32(packet["hero_info"]["spells"]["2"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{packet["hero_info"]["spells"]["2"]}") : null,
+                    (Convert.ToInt32(packet["hero_info"]["spells"]["3"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{packet["hero_info"]["spells"]["3"]}") : null,
+                    (Convert.ToInt32(packet["hero_info"]["spells"]["4"]) > 0) ? Resources.Load<SpellData>($"Spells/Data/{packet["hero_info"]["spells"]["4"]}") : null,
+                }
+            };
 
             var unit = new Hero()
             {
-                ID = _id,
-                heroData = Resources.Load<HeroData>($"Characters/{ _heroId }/data"),
-                Team = _teamId,
-                location = new Vector2(_location_x, _location_y),
+                ID = Convert.ToInt32(packet["hero_info"]["id"]),
+                playerHero = playerHero,
+                Team = TeamID.RED,
+                location = new Vector2Int(Convert.ToInt32(packet["x"]), Convert.ToInt32(packet["y"]))
             };
-            
+
             BattleManager.Instance.SpawnUnit(unit);
         }
     }
 
-    public static void MoveUnit(Packet _packet)
+    public static void MoveUnit(string _packet)
     {
         if (BattleManager.Instance != null)
         {
-            int _id = _packet.ReadInt();
-            int _location_x = _packet.ReadInt();
-            int _location_y = _packet.ReadInt();
-
-            BattleManager.Instance.MoveUnit(_id, _location_x, _location_y);
+            var gam = JObject.Parse(_packet);
+            BattleManager.Instance.MoveUnit(Convert.ToInt32(gam["hero_id"]), Convert.ToInt32(gam["x"]), Convert.ToInt32(gam["y"]));
         }
     }
 
-    public static void StartFight(Packet _packet)
+    public static void StartFight(string _packet)
     {
-        if(BattleManager.Instance == null)
+        if (BattleManager.Instance == null)
         {
-            int mapId = _packet.ReadInt();
+            var configs = JObject.Parse(_packet);
+            int mapId = Convert.ToInt32(configs["map_id"]);
 
             Debug.Log($"RCV Started Fight MapID {mapId}");
 
@@ -150,23 +244,39 @@ public class ClientHandle : MonoBehaviour
         }
     }
 
-    public static void Attack(Packet _packet)
+    public static void GATEST(string _packet)
     {
-        /*
-                _packet.Write(_id);
-                _packet.Write(_spellId);
-                _packet.Write(_x);
-                _packet.Write(_y);
-        */
-
         if (BattleManager.Instance != null)
         {
-            int _id = _packet.ReadInt();
-            int _spellId = _packet.ReadInt();
-            int _location_x = _packet.ReadInt();
-            int _location_y = _packet.ReadInt();
+            var gaTest = JObject.Parse(_packet);
+            var colorTiles = new List<Vector2Int>();
+            foreach(JObject x in (JArray)gaTest["cells"])
+            {
+                colorTiles.Add(new Vector2Int(Convert.ToInt32(x["x"]), Convert.ToInt32(x["y"])));
+            }
+            BattleManager.Instance.battleMap.WalkingTiles(colorTiles);
+        }
+    }
 
-            BattleManager.Instance.Attack(_id, _spellId, _location_x, _location_y);
+    public static void Attack(string _packet)
+    {
+        if (BattleManager.Instance != null)
+        {
+            var attackRequest = JObject.Parse(_packet);
+            BattleManager.Instance.Attack(Convert.ToInt32(attackRequest["hero_id"]), Convert.ToInt32(attackRequest["spell_id"]), Convert.ToInt32(attackRequest["x"]), Convert.ToInt32(attackRequest["y"]));
+        }
+    }
+
+    public static void PleaseUpdate(string _packet)
+    {
+        UIManager.Instance.OpenPanel("PleaseUpdate");
+    }
+
+    public static void EndGameResult(string _packet)
+    {
+        if(BattleManager.Instance != null)
+        {
+            BattleManager.Instance.EndGame(JObject.Parse(_packet));
         }
     }
 }

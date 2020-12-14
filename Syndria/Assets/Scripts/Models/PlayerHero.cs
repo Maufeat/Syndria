@@ -3,10 +3,14 @@ using UnityEngine;
 
 public class PlayerHero
 {
-    public int ID;
+    public int id;
+    public int owner_id;
+    public HeroTemplate template;
     public int level;
     public int xp;
-    public int aptitude;
-    public HeroData baseHeroData;
-    public List<SpellData> spellData;
+    public int hat;
+    public int cape;
+    public int amulett;
+    public int shoes;
+    public SpellData[] spellData = new SpellData[4];
 }

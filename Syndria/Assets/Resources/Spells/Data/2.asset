@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d9f1334ba06b84097fc09d61480354, type: 3}
   m_Name: 2
   m_EditorClassIdentifier: 
-  ID: 0
-  Name: 
-  Rarity: 0
+  ID: 2
+  Name: Heal
+  Rarity: 1
   CanLearn: 
-  rangePattern: {fileID: 0}
-  attackPattern: {fileID: 0}
-  sprite: {fileID: 0}
-  range: 0
-  anim: {fileID: 0}
+  rangePattern: {fileID: 11400000, guid: 425be33d06a168e458eb24cbbb89a242, type: 2}
+  attackPattern: {fileID: 11400000, guid: c68459569b7593847af181fb44738593, type: 2}
+  sprite: {fileID: 21300000, guid: 15dc1a7b57b5fed4fbf49d0b8e7edae6, type: 3}
+  range: 3
+  prefab: {fileID: 5721924812863002814, guid: 5d122494c92966e4780d02df477e3cba, type: 3}
+  anim: {fileID: 2006514255636334962, guid: 8fddd8ad814c4d944a383fca8a173085, type: 3}

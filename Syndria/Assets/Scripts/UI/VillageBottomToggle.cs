@@ -11,6 +11,7 @@ public class VillageBottomToggle : MonoBehaviour
     public Button heroBtn;
     public Button inventoryBtn;
     public Button storyBtn;
+    public Button testBtn;
 
     public TMPro.TextMeshProUGUI closeText;
 
@@ -39,6 +40,11 @@ public class VillageBottomToggle : MonoBehaviour
         storyBtn.onClick.AddListener(() =>
         {
             UIManager.Instance.OpenPanel("UIStory");
+        });
+
+        testBtn.onClick.AddListener(() =>
+        {
+            UIManager.Instance.OpenPanel("UIFormation");
         });
     }
     

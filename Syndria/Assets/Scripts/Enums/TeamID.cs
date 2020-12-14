@@ -2,5 +2,5 @@
 {
     BLUE,
     RED,
-    NEUTRAL
+    NEUTRAL 
 }

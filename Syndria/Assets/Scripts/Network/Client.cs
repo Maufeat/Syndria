@@ -4,37 +4,55 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Text;
+using NativeWebSocket;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UnityEngine.Advertisements;
 
-public class Client : MonoBehaviour
+public class Client : MonoBehaviour, IUnityAdsListener
 {
     public static Client Instance;
-    public static int dataBufferSize = 4096;
-
-    public string ip = "192.168.178.192";
-    public int port = 1337;
-    public int myId = 0;
 
     public Player me;
 
-    public TCP tcp;
-    public bool isConnected = false;
-    private delegate void PacketHandler(Packet _packet);
-    private static Dictionary<int, PacketHandler> packetHandlers;
+    public int v = 100;
 
-    private void OnApplicationQuit()
+    public int[] availableCreateCharacter = { 1 };
+
+    private WebSocket websocket = new WebSocket("ws://192.168.178.192:8080");
+    private delegate void PacketHandler(string _packet);
+    private static Dictionary<string, PacketHandler> packetHandlers;
+
+
+    public delegate void HeroListDrag(PlayerHero hero, Vector3 mousePos);
+    public event HeroListDrag onHeroListDrag;
+
+    //ads
+#if UNITY_IOS
+    private string gameId = "3937122";
+#elif UNITY_ANDROID
+    private string gameId = "3937123";
+#endif
+
+    string myPlacementId = "rewardedVideo";
+#if UNITY_EDITOR
+    bool testMode = true;
+#else
+    bool testMode = false;
+#endif
+    public void OnHeroListDrag(PlayerHero hero, Vector3 mousePos)
     {
-        Disconnect();
+        onHeroListDrag.Invoke(hero, mousePos);
     }
 
-    private void Disconnect()
+    private async void OnApplicationQuit()
     {
-        if (isConnected)
-        {
-            isConnected = false;
-            tcp.socket.Close();
-            NetworkManager.Instance.Disconnect();
-        }
+        NetworkManager.Instance.Disconnect();
+        await websocket.Close();
     }
+
 
     private void Awake()
     {
@@ -49,166 +67,137 @@ public class Client : MonoBehaviour
         }
     }
 
-    public void ConnectToServer()
+    private void Start()
     {
-        tcp = new TCP();
-
-        InitializeClientData();
-
-        isConnected = true;
-        tcp.Connect();
+        Advertisement.AddListener(this);
+        Advertisement.Initialize(gameId, testMode);
     }
 
-    public class TCP
+    void Update()
     {
-        public TcpClient socket;
+#if !UNITY_WEBGL || UNITY_EDITOR
+        if (websocket.State == WebSocketState.Open)
+            websocket.DispatchMessageQueue();
+#endif
+    }
 
-        private NetworkStream stream;
-        private Packet receivedData;
-        private byte[] receiveBuffer;
+    public async Task ConnectToServer()
+    {
+        if (websocket.State == WebSocketState.Connecting || websocket.State == WebSocketState.Open)
+            return;
 
-        public void Connect()
+        InitializeClientData();
+        websocket.OnOpen += () =>
         {
-            socket = new TcpClient
-            {
-                ReceiveBufferSize = dataBufferSize,
-                SendBufferSize = dataBufferSize
-            };
-
-            receiveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(Instance.ip, Instance.port, ConnectCallback, socket);
-        }
-
-        private void ConnectCallback(IAsyncResult _result)
+            Debug.Log("Connection open!");
+        };
+        websocket.OnError += (e) =>
         {
-            socket.EndConnect(_result);
-
-            if (!socket.Connected)
+            Debug.Log("Error!");
+            ThreadManager.ExecuteOnMainThread(() =>
             {
-                return;
-            }
-
-            stream = socket.GetStream();
-
-            receivedData = new Packet();
-
-            stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
-        }
-
-        public void SendData(Packet _packet)
+                UIManager.Instance.OpenMsgBox(e);
+            });
+        };
+        websocket.OnClose += (e) =>
         {
-            try
-            {
-                if (socket != null)
-                {
-                    stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
-                }
-            }
-            catch (Exception _ex)
-            {
-                Debug.Log($"Error sending data to server via TCP: {_ex}");
-            }
-        }
-
-        private void ReceiveCallback(IAsyncResult _result)
+            NetworkManager.Instance.Disconnect();
+            this.websocket = new WebSocket("ws://192.168.178.192:8080");
+        };
+        websocket.OnMessage += (bytes) =>
         {
-            try
-            {
-                int _byteLength = stream.EndRead(_result);
-                if (_byteLength <= 0)
-                {
-                    Instance.Disconnect();
-                    return;
-                }
+            var packetAsString = Encoding.UTF8.GetString(bytes);
+            var packetAsJson = JObject.Parse(packetAsString);
+            Debug.Log(Convert.ToString((string)packetAsJson["msgHeader"]));
+            packetHandlers[Convert.ToString((string)packetAsJson["msgHeader"])](packetAsString);
+        };
+        await websocket.Connect();
+    }
 
-                byte[] _data = new byte[_byteLength];
-                Array.Copy(receiveBuffer, _data, _byteLength);
-
-                receivedData.Reset(HandleData(_data));
-                stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
-            }
-            catch
-            {
-                Disconnect();
-            }
-        }
-
-        private bool HandleData(byte[] _data)
-        {
-            int _packetLength = 0;
-
-            receivedData.SetBytes(_data);
-
-            if (receivedData.UnreadLength() >= 4)
-            {
-                _packetLength = receivedData.ReadInt();
-                if (_packetLength <= 0)
-                {
-                    return true;
-                }
-            }
-
-            while (_packetLength > 0 && _packetLength <= receivedData.UnreadLength())
-            {
-                byte[] _packetBytes = receivedData.ReadBytes(_packetLength);
-                ThreadManager.ExecuteOnMainThread(() =>
-                {
-                    using (Packet _packet = new Packet(_packetBytes))
-                    {
-                        int _packetId = _packet.ReadInt();
-                        packetHandlers[_packetId](_packet);
-                    }
-                });
-
-                _packetLength = 0;
-                if (receivedData.UnreadLength() >= 4)
-                {
-                    _packetLength = receivedData.ReadInt();
-                    if (_packetLength <= 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            if (_packetLength <= 1)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Disconnect()
-        {
-            Instance.Disconnect();
-
-            stream = null;
-            receivedData = null;
-            receiveBuffer = null;
-            socket = null;
-        }
+    public async void Send(string json)
+    {
+        await websocket.SendText(json);
     }
 
     private void InitializeClientData()
     {
-        packetHandlers = new Dictionary<int, PacketHandler>()
+        packetHandlers = new Dictionary<string, PacketHandler>()
         {
-            { (int)S2C.welcome, ClientHandle.Welcome },
-            { (int)S2C.userData, ClientHandle.UpdateUserData},
-            { (int)S2C.createCharacter, ClientHandle.CreateCharacter},
-            { (int)S2C.toTutorial, ClientHandle.GoToTutorial},
-            { (int)S2C.toVillage, ClientHandle.GoToVillage},
-            { (int)S2C.messageBox, ClientHandle.OpenMessageBox},
-            { (int)S2C.changeTurn, ClientHandle.ChangeTurn },
-            { (int)S2C.changeReadyState, ClientHandle.ChangeReadyState },
-            { (int)S2C.spawnUnit, ClientHandle.SpawnUnit },
-            { (int)S2C.allLoaded, ClientHandle.AllLoaded },
-            { (int)S2C.moveUnit, ClientHandle.MoveUnit },
-            { (int)S2C.attack, ClientHandle.Attack },
-            { (int)S2C.startFight, ClientHandle.StartFight },
+            { "HC", ClientHandle.Welcome },
+            { "SC", ClientHandle.UpdateServerConfig },
+            { "MB", ClientHandle.MessageBox },
+            { "CA", ClientHandle.CreateCharacter },
+            { "TT", ClientHandle.GoToTutorial },
+            { "HF", ClientHandle.UpdateHeroFormation },
+            { "VA", ClientHandle.GoToVillage },
+            { "AD", ClientHandle.UpdateUserData },
+            { "HL", ClientHandle.UpdateHeroList },
+            { "GPC", ClientHandle.SetPrepChar },
+            { "GSL", ClientHandle.GameStateLoaded },
+            { "GSR", ClientHandle.ChangeReadyState },
+            { "FS", ClientHandle.StartFight },
+            { "GST", ClientHandle.ChangeTurn },
+            { "GAM", ClientHandle.MoveUnit },
+            { "GAS", ClientHandle.Attack },
+            { "GATEST", ClientHandle.GATEST },
+            { "GSC", ClientHandle.SpawnUnit },
+            { "GEG", ClientHandle.EndGameResult },
+            { "AWV", ClientHandle.PleaseUpdate },
         };
 
         Debug.Log("Initialized packets.");
+    }
+
+    public void ShowRewardedVideo()
+    {
+        if (Advertisement.IsReady(myPlacementId))
+        {
+            Advertisement.Show(myPlacementId);
+        }
+        else
+        {
+            Debug.Log("Rewarded video is not ready at the moment! Please try again later!");
+        }
+    }
+
+    public void OnUnityAdsReady(string placementId)
+    {
+        // If the ready Placement is rewarded, show the ad:
+        if (placementId == myPlacementId)
+        {
+            // Optional actions to take when the placement becomes ready(For example, enable the rewarded ads button)
+        }
+    }
+
+    public void OnUnityAdsDidError(string message)
+    {
+        // Log the error.
+    }
+
+    public void OnUnityAdsDidStart(string placementId)
+    {
+        // Optional actions to take when the end-users triggers an ad.
+    } 
+
+    public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
+    {
+        // Define conditional logic for each ad completion status:
+        if (showResult == ShowResult.Finished)
+        {
+            // Reward the user for watching the ad to completion.
+        }
+        else if (showResult == ShowResult.Skipped)
+        {
+            // Do not reward the user for skipping the ad.
+        }
+        else if (showResult == ShowResult.Failed)
+        {
+            Debug.LogWarning("The ad did not finish due to an error.");
+        }
+    }
+
+    public void OnDestroy()
+    {
+        Advertisement.RemoveListener(this);
     }
 }

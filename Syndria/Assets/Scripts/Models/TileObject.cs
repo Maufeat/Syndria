@@ -10,7 +10,7 @@ public class TileObject : ITileObject
 
     public bool walkable { get; }
 
-    public GameObject renderObject { get; }
+    public GameObject renderObject { get; set;  }
 
     public TileObjState mapState { get; set; }
 

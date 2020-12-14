@@ -97,7 +97,7 @@ public class FieldHero : MonoBehaviour
                     animator.SetBool("Run", false);
                     if (!hasAttacked)
                     {
-                        BattleManager.Instance.currentState = TileObjState.Attacking;
+                        BattleManager.Instance.currentState = TileObjState.None;
                         BattleManager.Instance.selectedHero = this;
                     }
                     else
@@ -138,6 +138,8 @@ public class FieldHero : MonoBehaviour
     {
         foreach (var spell in hero.playerHero.spellData)
         {
+            if (spell == null)
+                continue;
             if (spell.ID == id)
             {
                 Vector2 castPos = new Vector2(x, y);
@@ -145,7 +147,9 @@ public class FieldHero : MonoBehaviour
                 SpellHolder holder = spell.prefab.GetComponent<SpellHolder>();
                 holder.spell.spellData = spell;
                 holder.spell.Cast(castPos, GetTilesByPattern(castPos, spell.attackPattern));
+                hasAttacked = true;
                 //spell.Cast(castPos, GetTilesByPattern(castPos, spell.attackPattern));
+                return;
             }
         }
     }
@@ -193,7 +197,7 @@ public class FieldHero : MonoBehaviour
         BattleManager.Instance.battleMap.ClearColor();
         BattleManager.Instance.currentState = TileObjState.Moving;
         BattleManager.Instance.selectedHero = this;
-        var adTiles = GetWalkableTiles((int)hero.heroData.BaseStats.Movement);
+        var adTiles = GetWalkableTiles(hero.playerHero.template.movement);
         var coords = new List<Vector2Int>();
         foreach (Tile tile in adTiles)
         {

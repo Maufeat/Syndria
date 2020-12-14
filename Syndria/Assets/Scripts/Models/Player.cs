@@ -3,30 +3,31 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+[Serializable]
 public class Player
 {
-    public string Username { get; set; }
-    public DateTime lastLogin { get; set; }
-    public DateTime? lastDaily { get; set; }
-    public int dailyCount { get; set; }
-    public int level { get; set; }
-    public int exp { get; set; }
-    public int energy { get; set; }
-    public DateTime? lastUsedEnergy { get; set; }
-    public int gold { get; set; }
-    public int diamonds { get; set; }
+    public int id;
+    public string nickname;
+    public string google_id;
+    public string last_login;
+    public int profile_picture_id;
+    public int tutorial_step;
+    public string last_daily;
+    public int daily_count;
+    public int level;
+    public int exp;
+    public int energy;
+    public string last_used_energy;
+    public int gold;
+    public int diamonds;
+
+    public int[] experienceTable = { }; 
 
     public List<PlayerHero> heroes { get; set; }
     public List<ItemData> items { get; set; }
 
-    /*public void UpdatePlayerData(LittleEndianReader data)
-    {
-        Username = data.ReadSizedString();
-        level = data.ReadInt();
-        exp = data.ReadInt();
-        gold = data.ReadInt();
-        diamonds = data.ReadInt();
-    }*/
+    public Formation currentFormation = new Formation();
+
 
     public void ParseInventoryString(string inventoryString)
     {

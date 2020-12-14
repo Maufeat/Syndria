@@ -1,103 +1,126 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ClientSend : MonoBehaviour
 {
-    private static void SendTCPData(Packet _packet)
+    private static void SendData(string _packet)
     {
-        _packet.WriteLength();
-        Client.Instance.tcp.SendData(_packet);
+        Client.Instance.Send(_packet);
     }
 
     #region Packets
-    public static void WelcomeReceived()
-    {
-        using (Packet _packet = new Packet((int)C2S.verifyAccessToken))
-        {
-            _packet.Write(Client.Instance.myId);
-            _packet.Write(NetworkManager.Instance.FBAccessToken.TokenString);
-
-            SendTCPData(_packet);
-        }
-    }
 
     public static void SetPrepCharacters(Hero hero)
     {
-        using (Packet _packet = new Packet((int)C2S.setPrepCharacter))
-        {
-            _packet.Write(hero.ID);
-            _packet.Write((int)hero.location.x);
-            _packet.Write((int)hero.location.y);
+        SendData($"GSP|{hero.ID},{hero.location.x},{hero.location.y}");
+        Debug.Log($"Set Figure ID {hero.ID} to {hero.location.x}/{hero.location.y}");
+    }
 
-            Debug.Log($"Set Figure ID {hero.ID} to {hero.location.x}/{hero.location.y}");
+    public static void DeleteFormation()
+    {
+        JObject formation = new JObject();
+        formation["msgHeader"] = "SRF";
+        SendData(JsonConvert.SerializeObject(formation));
+    }
 
-            SendTCPData(_packet);
-        }
+    public static void SetFormation(PlayerHero hero, Vector2 location)
+    {
+        JObject formation = new JObject();
+        formation["msgHeader"] = "SF";
+        formation["id"] = hero.id;
+        formation["x"] = location.x;
+        formation["y"] = location.y;
+        SendData(JsonConvert.SerializeObject(formation));
+    }
+
+    public static void SetPrepCharacters(PlayerHero hero, Vector2 location)
+    {
+        JObject gspPacket = new JObject();
+        gspPacket["msgHeader"] = "GSP";
+        gspPacket["owner_id"] = hero.owner_id;
+        gspPacket["hero_id"] = hero.id;
+        gspPacket["x"] = location.x;
+        gspPacket["y"] = location.y;
+        SendData(JsonConvert.SerializeObject(gspPacket));
+        Debug.Log($"Set Figure ID {hero.id} to {location.x}/{location.y}");
     }
 
     public static void StartFight(int mapId)
     {
-        using (Packet _packet = new Packet((int)C2S.startFight))
-        {
-            _packet.Write(mapId);
+        JObject startFight = new JObject();
+        startFight["msgHeader"] = "FS";
+        startFight["type"] = "TEST";
+        startFight["map_id"] = mapId;
+        SendData(JsonConvert.SerializeObject(startFight));
+    }
 
-            Debug.Log($"Started Fight MapID {mapId}");
-
-            SendTCPData(_packet);
-        }
+    public static void Test()
+    {
+        SendData("TEST|TEST");
     }
 
     public static void SendCreateCharacter(int heroId, string nickname)
     {
-        using (Packet _packet = new Packet((int)C2S.createCharacter))
-        {
-            _packet.Write(heroId);
-            _packet.Write(nickname);
-
-            SendTCPData(_packet);
-        }
+        JObject cc = new JObject();
+        cc["msgHeader"] = "CC";
+        cc["nickname"] = nickname;
+        cc["start_hero"] = heroId;
+        SendData(JsonConvert.SerializeObject(cc));
     }
 
     public static void ClientLoaded()
     {
-        using (Packet _packet = new Packet((int)C2S.battlefieldLoaded))
-        {
-            SendTCPData(_packet);
-        }
+        JObject cl = new JObject();
+        cl["msgHeader"] = "GCL";
+        SendData(JsonConvert.SerializeObject(cl));
+    }
+
+    public static void EndTurn()
+    {
+        JObject get = new JObject();
+        get["msgHeader"] = "GET";
+        SendData(JsonConvert.SerializeObject(get));
+    }
+
+    public static void SendPacket(string msg)
+    {
+        JObject dynamicMsg = new JObject();
+        dynamicMsg["msgHeader"] = msg;
+        SendData(JsonConvert.SerializeObject(dynamicMsg));
     }
 
     public static void MoveUnit(int unitId, int x, int y)
     {
-        using (Packet _packet = new Packet((int)C2S.moveUnit))
-        {
-            _packet.Write(unitId);
-            _packet.Write(x);
-            _packet.Write(y);
-            SendTCPData(_packet);
-        }
+        JObject gam = new JObject();
+        gam["msgHeader"] = "GAM";
+        gam["hero_id"] = unitId;
+        gam["x"] = x;
+        gam["y"] = y;
+        SendData(JsonConvert.SerializeObject(gam));
     }
 
     public static void Attack(int unitId, int spellId, int x, int y)
     {
-        using (Packet _packet = new Packet((int)C2S.attack))
-        {
-            _packet.Write(unitId);
-            _packet.Write(spellId);
-            _packet.Write(x);
-            _packet.Write(y);
-            SendTCPData(_packet);
-        }
+        JObject gas = new JObject();
+        gas["msgHeader"] = "GAS";
+        gas["hero_id"] = unitId;
+        gas["spell_id"] = spellId;
+        gas["x"] = x;
+        gas["y"] = y;
+        SendData(JsonConvert.SerializeObject(gas));
     }
 
     public static void ChangeReadyState(bool ready)
     {
-        using (Packet _packet = new Packet((int)C2S.changeReadyState))
-        {
-            _packet.Write(ready);
-            SendTCPData(_packet);
-        }
+        JObject grs = new JObject();
+        grs["msgHeader"] = "GSR";
+        grs["ready"] = ready;
+        SendData(JsonConvert.SerializeObject(grs));
     }
 
-    #endregion
+#endregion
 }

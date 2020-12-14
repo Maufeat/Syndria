@@ -11,12 +11,18 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
   m_Name: data
-  m_EditorClassIdentifier: 
-  ID: 9000
-  Name: Scarecrow
-  Description: <A Test Dummy>
-  Type: 1
-  BaseRarity: 4
-  BaseStats: {fileID: 11400000, guid: 44d9385f150649f498d37ddacaa45a93, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::HeroTemplate
+  id: 9000
+  name: Scarecrow
+  type: 1
+  rarity: 4
+  health: 50
+  strength: 0
+  inteligence: 0
+  luck: 0
+  agility: 0
+  startSpellId: 1
+  movement: 3
+  description: 
   overwriteGameObject: {fileID: 4587181919502885192, guid: 46b4bb31093c92841ae734c35c0420d6,
     type: 3}

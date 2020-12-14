@@ -9,11 +9,26 @@ public class SkillBtn : MonoBehaviour
     public Button btn;
     public TMPro.TextMeshProUGUI spellName;
     public Image spellTexture;
+    public Image locked;
 
     public SpellData spell;
 
     public void ChangeBtn(SpellData _data)
     {
+        if(_data == null)
+        {
+            locked.gameObject.SetActive(true);
+            spellTexture.gameObject.transform.parent.gameObject.SetActive(false);
+            spellName.gameObject.SetActive(false);
+            btn.interactable = false;
+            return;
+        } else
+        {
+            locked.gameObject.SetActive(false);
+            spellTexture.gameObject.transform.parent.gameObject.SetActive(true);
+            spellName.gameObject.SetActive(true);
+            btn.interactable = true;
+        }
         spell = _data;
         spellName.text = _data.Name;
         spellTexture.sprite = _data.sprite;

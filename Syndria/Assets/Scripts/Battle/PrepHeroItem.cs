@@ -13,7 +13,7 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public bool canDrag = false;
     public bool showLevel = false;
-    private bool disabled = false;
+    public bool disabled = false;
 
     void Start()
     {
@@ -23,21 +23,21 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void SetupImages()
     {
-        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/thumb");
-        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.baseHeroData.BaseRarity}");
-        transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.baseHeroData.Type}");
-        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(hero.baseHeroData.BaseRarity);
+        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{hero.template.id}/thumb");
+        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.template.rarity}");
+        transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.template.type}");
+        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(hero.template.rarity);
         if (!showLevel)
             transform.Find("Level").gameObject.SetActive(false);
         disabledLayer = transform.Find("DisableTrigger").GetComponent<Image>();
     }
 
-    public void SetupImagesByHeroData(HeroData _heroData)
+    public void SetupImagesByHeroData(HeroTemplate _heroData)
     {
-        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{_heroData.ID}/thumb");
-        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)_heroData.BaseRarity}");
-        transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)_heroData.Type}");
-        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(_heroData.BaseRarity);
+        transform.Find("Thumbnail").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Characters/{_heroData.id}/thumb");
+        transform.Find("Rarity").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)_heroData.rarity}");
+        transform.Find("Type").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Images/Type/{(int)_heroData.type}");
+        transform.Find("RankBorder").GetComponent<Image>().color = MathExt.getColorByRarity(_heroData.rarity);
         if (!showLevel)
             transform.Find("Level").gameObject.SetActive(false);
         disabledLayer = transform.Find("DisableTrigger").GetComponent<Image>();
@@ -59,8 +59,8 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
 
         if (dragSprite == null)
         {
-            dragSprite = Instantiate(hero.baseHeroData.overwriteGameObject);
-            dragSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{hero.baseHeroData.ID}/sprite");
+            dragSprite = Instantiate(hero.template.overwriteGameObject);
+            dragSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>($"Characters/{hero.template.id}/sprite");
             dragSprite.GetComponent<SpriteRenderer>().flipX = true;
             dragSprite.transform.localScale -= new Vector3(0.5f, 0.5f);
             dragSprite.GetComponent<Animator>().SetBool("Grabbed", true);
@@ -83,7 +83,25 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
         {
             Destroy(dragSprite);
             dragSprite = null;
-            BattleManager.Instance.SpawnCharacter(hero, mouseV3, true, this);
+            if (BattleManager.Instance != null)
+            {
+                BattleManager.Instance.SendSetPrepHero(hero, mouseV3);
+            }
+            else
+            {
+                Client.Instance.OnHeroListDrag(hero, mouseV3);
+            }
+        }
+    }
+
+    void Update()
+    {
+        if (BattleManager.Instance)
+        {
+            if (!BattleManager.Instance.started)
+            {
+                SetDisabled(true);
+            }
         }
     }
 }

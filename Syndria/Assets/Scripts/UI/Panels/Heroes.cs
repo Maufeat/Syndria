@@ -68,16 +68,16 @@ public class Heroes : UIPanel
         if (selectedHeroRender != null)
             Destroy(selectedHeroRender.gameObject);
 
-        selectedHeroRender = Instantiate(hero.baseHeroData.overwriteGameObject, selectedHeroRenderHolder.transform);
+        selectedHeroRender = Instantiate(hero.template.overwriteGameObject, selectedHeroRenderHolder.transform);
         SpriteRenderer cacheSpriteRenderer = selectedHeroRender.GetComponent<SpriteRenderer>();
-        cacheSpriteRenderer.transform.localPosition = new Vector3(85f, -100f);
+        cacheSpriteRenderer.transform.localPosition = new Vector3(0, -100f);
         cacheSpriteRenderer.transform.localScale = new Vector3(30, 30);
         cacheSpriteRenderer.sortingOrder = 99;
 
         // SelectedValues
-        selectedHeroName.text = hero.baseHeroData.Name;
-        selectedHeroName.color = MathExt.getColorByRarity(hero.baseHeroData.BaseRarity);
-        selectedHeroRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.baseHeroData.BaseRarity}");        selectedHeroType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.baseHeroData.Type}");
+        selectedHeroName.text = hero.template.name;
+        selectedHeroName.color = MathExt.getColorByRarity(hero.template.rarity);
+        selectedHeroRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.template.rarity}");        selectedHeroType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.template.type}");
         selectedHeroLevel.text = $"Lv. { hero.level }";
         //selectedHeroPower.text = $"Power: 9000";
         //Resources.Load<Sprite>($"Images/Rarity/{(int)_heroData.BaseRarity}");

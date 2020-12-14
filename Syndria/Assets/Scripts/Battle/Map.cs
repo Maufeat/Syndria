@@ -15,7 +15,7 @@ public class Map
     
     public Dictionary<TeamID, List<FieldHero>> units = new Dictionary<TeamID, List<FieldHero>>();
 
-    public List<PrepHeroItem> availableHeroes;
+    //public List<PrepHeroItem> availableHeroes;
     
     private Vector2Int hightlightedTile;
 

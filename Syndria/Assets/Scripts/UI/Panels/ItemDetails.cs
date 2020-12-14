@@ -12,7 +12,7 @@ public class ItemDetails : UIPanel
     public TMPro.TextMeshProUGUI itemName;
     public TMPro.TextMeshProUGUI itemDescription;
 
-    public HeroData heroData;
+    public HeroTemplate heroData;
     public ItemData itemData;
     
     public void Start()
@@ -37,11 +37,11 @@ public class ItemDetails : UIPanel
         itemDescription.text = itemData.Description;
     }
 
-    public void SetupAsHero(HeroData _heroData)
+    public void SetupAsHero(HeroTemplate _heroData)
     {
         heroData = _heroData;
         itemPortrait.SetupPortraitAsHero(heroData);
-        itemName.text = heroData.Name;
-        itemDescription.text = heroData.Description;
+        itemName.text = heroData.name;
+        itemDescription.text = heroData.description;
     }
 }

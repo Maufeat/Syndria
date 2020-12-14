@@ -11,12 +11,18 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
   m_Name: data
-  m_EditorClassIdentifier: 
-  ID: 3
-  Name: Mitsuki
-  Description: <Mitsuki>No Description
-  Type: 3
-  BaseRarity: 3
-  BaseStats: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::HeroTemplate
+  id: 3
+  name: Mitsuki
+  type: 3
+  rarity: 1
+  health: 50
+  strength: 0
+  inteligence: 0
+  luck: 0
+  agility: 0
+  startSpellId: 1
+  movement: 3
+  description: None
   overwriteGameObject: {fileID: 6406432427874470226, guid: b0f2818d81a6b7045ad3f3276e7dee59,
     type: 3}
