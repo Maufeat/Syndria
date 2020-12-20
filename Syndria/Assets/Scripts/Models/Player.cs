@@ -28,27 +28,6 @@ public class Player
 
     public Formation currentFormation = new Formation();
 
-
-    public void ParseInventoryString(string inventoryString)
-    {
-        items = new List<ItemData>();
-        //split into itemId,Qty
-        string[] inventorySplit = inventoryString.Split(';');
-        foreach (var itemStack in inventorySplit)
-        {
-            var itemStackSplit = itemStack.Split(',');
-
-            var itemId = itemStackSplit[0];
-            var itemQty = itemStackSplit[1];
-            
-            var item = Resources.Load<ItemData>($"Items/{itemId}");
-            item.qty = Convert.ToInt32(itemQty);
-
-            items.Add(item);
-        }
-
-    }
-
     public string InventoryToString()
     {
         StringBuilder str = new StringBuilder();

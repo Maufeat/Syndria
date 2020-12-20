@@ -21,4 +21,4 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 6dcc559dfe75b4f40b8ffa0e52aa7dd2, type: 3}
   range: 6
   prefab: {fileID: 3261468708918872497, guid: a464479b06cccae45aa660ecef4965d9, type: 3}
-  anim: {fileID: 2376210147499652268, guid: 2d75802427ccd524baa2a0d27ac04aea, type: 3}
+  anim: {fileID: 6568482854982650163, guid: f7287c0de9d759a4c9c09e4c8440250b, type: 3}

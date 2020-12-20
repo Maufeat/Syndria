@@ -2,9 +2,9 @@
 
 public class AttackableObject : TileObject, IAttackableObject
 {
-    public bool IsDead { get; }
+    public bool IsDead { get; set; }
 
-    public IStats Stats { get; }
+    public Stats Stats { get; set;  }
     
     public void ChangeModel(GameObject model)
     {
@@ -13,7 +13,6 @@ public class AttackableObject : TileObject, IAttackableObject
 
     public void Die(IAttackableObject killer)
     {
-        throw new System.NotImplementedException();
     }
 
     public void TakeDamage(IAttackableObject attacker, float damage, bool isCrit)

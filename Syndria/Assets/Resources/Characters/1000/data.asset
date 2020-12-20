@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 069a1fbbdf86e2d4b8c22012fcf91204, type: 3}
+  m_Name: data
+  m_EditorClassIdentifier: 
+  id: 1000
+  name: Karu
+  type: 1
+  rarity: 1
+  health: 0
+  strength: 0
+  inteligence: 0
+  luck: 0
+  agility: 0
+  startSpellId: 1
+  movement: 2
+  description: None
+  overwriteGameObject: {fileID: 452922906926869064, guid: 2934e49056f7beb4d8dd41575ef00e67,
+    type: 3}

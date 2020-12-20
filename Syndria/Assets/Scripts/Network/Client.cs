@@ -21,7 +21,7 @@ public class Client : MonoBehaviour, IUnityAdsListener
 
     public int[] availableCreateCharacter = { 1 };
 
-    private WebSocket websocket = new WebSocket("ws://192.168.178.192:8080");
+    private WebSocket websocket;
     private delegate void PacketHandler(string _packet);
     private static Dictionary<string, PacketHandler> packetHandlers;
 
@@ -37,6 +37,7 @@ public class Client : MonoBehaviour, IUnityAdsListener
 #endif
 
     string myPlacementId = "rewardedVideo";
+
 #if UNITY_EDITOR
     bool testMode = true;
 #else
@@ -76,13 +77,19 @@ public class Client : MonoBehaviour, IUnityAdsListener
     void Update()
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
-        if (websocket.State == WebSocketState.Open)
-            websocket.DispatchMessageQueue();
+        if(websocket != null)
+            if (websocket.State == WebSocketState.Open)
+                websocket.DispatchMessageQueue();
 #endif
     }
 
-    public async Task ConnectToServer()
+    public async Task ConnectToServer(string host, int port)
     {
+        var connectionString = $"ws://{host}:{port}";
+
+        if (websocket == null)
+            websocket = new WebSocket(connectionString);
+
         if (websocket.State == WebSocketState.Connecting || websocket.State == WebSocketState.Open)
             return;
 
@@ -96,20 +103,27 @@ public class Client : MonoBehaviour, IUnityAdsListener
             Debug.Log("Error!");
             ThreadManager.ExecuteOnMainThread(() =>
             {
+                UIManager.Instance.CloseLoadingBox();
                 UIManager.Instance.OpenMsgBox(e);
             });
         };
         websocket.OnClose += (e) =>
         {
             NetworkManager.Instance.Disconnect();
-            this.websocket = new WebSocket("ws://192.168.178.192:8080");
+            websocket = new WebSocket(connectionString);
         };
         websocket.OnMessage += (bytes) =>
         {
-            var packetAsString = Encoding.UTF8.GetString(bytes);
-            var packetAsJson = JObject.Parse(packetAsString);
-            Debug.Log(Convert.ToString((string)packetAsJson["msgHeader"]));
-            packetHandlers[Convert.ToString((string)packetAsJson["msgHeader"])](packetAsString);
+            try
+            {
+                var packetAsString = Encoding.UTF8.GetString(bytes);
+                var packetAsJson = JObject.Parse(packetAsString);
+                Debug.Log(Convert.ToString((string)packetAsJson["msgHeader"]));
+                packetHandlers[Convert.ToString((string)packetAsJson["msgHeader"])](packetAsString);
+            } catch(Exception e)
+            {
+
+            }
         };
         await websocket.Connect();
     }
@@ -143,6 +157,8 @@ public class Client : MonoBehaviour, IUnityAdsListener
             { "GSC", ClientHandle.SpawnUnit },
             { "GEG", ClientHandle.EndGameResult },
             { "AWV", ClientHandle.PleaseUpdate },
+            { "UI", ClientHandle.UpdateInventory },
+            { "GAR", ClientHandle.ActionResponse }
         };
 
         Debug.Log("Initialized packets.");

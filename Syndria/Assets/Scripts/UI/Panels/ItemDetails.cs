@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ItemDetails : UIPanel
 {
     public Button closeBtn;
+    public Button useBtn;
 
     public ItemPortrait itemPortrait;
 
@@ -35,6 +36,12 @@ public class ItemDetails : UIPanel
         itemPortrait.SetupPortraitAsItem(itemData);
         itemName.text = itemData.Name;
         itemDescription.text = itemData.Description;
+        useBtn.onClick.AddListener(() =>
+        {
+            var goScript = Instantiate(itemData.GameObject, gameObject.transform);
+            goScript.GetComponent<ItemHolder>().item.OnUse(1);
+        });
+        useBtn.gameObject.SetActive(true);
     }
 
     public void SetupAsHero(HeroTemplate _heroData)
@@ -43,5 +50,6 @@ public class ItemDetails : UIPanel
         itemPortrait.SetupPortraitAsHero(heroData);
         itemName.text = heroData.name;
         itemDescription.text = heroData.description;
+        useBtn.gameObject.SetActive(false);
     }
 }

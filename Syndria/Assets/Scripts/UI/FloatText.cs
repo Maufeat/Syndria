@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace Assets.Scripts.UI
@@ -9,11 +10,24 @@ namespace Assets.Scripts.UI
         public string text;
         public TextMeshProUGUI textMesh;
 
+        public Material positiveMaterial;
+        public Material negativeMaterial;
+
         private float _timer;
 
         // Use this for initialization
         void Start()
         {
+            Debug.Log(Convert.ToInt32(text));
+            if(Convert.ToInt32(text) >= 0)
+            {
+                Debug.Log(true);
+                textMesh.fontMaterial = positiveMaterial;
+            } else
+            {
+                Debug.Log(false);
+                textMesh.fontMaterial = negativeMaterial;
+            }
             textMesh.text = text;
         }
 

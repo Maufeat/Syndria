@@ -35,7 +35,7 @@ public class UIPanel : MonoBehaviour
     {
         if (UIManager.Instance.openPanels.Contains(this))
             UIManager.Instance.openPanels.Remove(this);
-        Destroy(gameObject);
+        DestroyImmediate(gameObject);
     }
 
     void Fade()

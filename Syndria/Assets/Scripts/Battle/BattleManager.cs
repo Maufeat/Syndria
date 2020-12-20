@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using Assets.Scripts.Battle;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using Assets.Scripts.UI;
 
 public class BattleManager : UIPanel
 {
@@ -38,8 +40,8 @@ public class BattleManager : UIPanel
     public Button endTurnBtn;
 
     public Color greeny = new Color32(0x1C, 0xA4, 0x00, 0xFF);
-    public Color bluey = new Color32(0x00, 0x1C, 0xA4, 0xFF);
-    public Color redy = new Color32(0xA4, 0x00, 0x1C, 0xFF);
+    public Color bluey = new Color(0.74f, 0.74f, 0);
+    public Color redy = new Color(0.6f, 0, 0.1f);
 
     public TMPro.TextMeshProUGUI timerText;
     public TMPro.TextMeshProUGUI turnText;
@@ -52,6 +54,8 @@ public class BattleManager : UIPanel
 
     public Button cheatBtn;
 
+    private GameObject hpBarLeft;
+    private GameObject hpBarRight;
 
     private void Awake()
     {
@@ -65,6 +69,7 @@ public class BattleManager : UIPanel
     
     void Start()
     {
+        AudioManager.Instance.PlayMusicWithFade(Resources.Load<AudioClip>("Sounds/BGM/bgm_guild"), 1);
         battleMap = new Map();
         battleMap.Init();
         Setup(); // Map Visuals and Audio
@@ -73,9 +78,9 @@ public class BattleManager : UIPanel
         actionBar.SetActive(false);
         waitingForAll.SetActive(true);
         enemyTurnLbl.gameObject.SetActive(false);
-        endTurnBtn.onClick.AddListener(() =>
-        {
-            ClientSend.EndTurn();
+        endTurnBtn.onClick.AddListener((
+) =>
+        {            ClientSend.EndTurn();
         });
         endTurnBtn.gameObject.SetActive(false);
 
@@ -84,6 +89,10 @@ public class BattleManager : UIPanel
         {
             ClientSend.SendPacket("GCHEATWIN");
         });
+
+        hpBarLeft = GameObject.Find($"UI/Header/HPBarLeft");
+        hpBarRight = GameObject.Find($"UI/Header/HPBarRight");
+        HideLPBars();
     }
 
     public void EndGame(JObject packetResult)
@@ -108,10 +117,12 @@ public class BattleManager : UIPanel
         _goTurnChangeText.text = "Turn " + turn;
         turnText.text = "Turn " + turn;
         _goTurnChange.GetComponent<Animator>().Play("TurnChangeText");
+        currentState = TileObjState.None;
         if (state == ActionState.Preparation)
         {
             prepBar.SetActive(false);
             HideReadyText();
+            ShowLPBars();
             ChangeState(ActionState.TeamBlue);
         }
         else if(state == ActionState.TeamBlue)
@@ -164,6 +175,33 @@ public class BattleManager : UIPanel
         caster.Attack(spellId, x, y);
     }
 
+    public void OnActionResponse(int targetId, int action, int value)
+    {
+        switch (action)
+        {
+            // Damage/Heal
+            case 1:
+                var target = battleMap.GetFieldHeroById(targetId);
+                FloatText text = (Instantiate(Resources.Load("Prefabs/UI/Misc/Floating Text"), target.transform.position, Quaternion.identity) as GameObject).GetComponent<FloatText>();
+                text.text = (value >= 0) ? $"+{value}" : $"{value}";
+                target.hero.Stats.health += value;
+                if(target.hero.Stats.health <= 0)
+                {
+                    target.hero.Stats.health = 0;
+                }
+                break;
+            default:
+                Debug.Log("Action not found.");
+                break;
+        }
+    }
+
+    public IEnumerator DeleteObjectWithDelay(int number, GameObject gameObject)
+    {
+        yield return new WaitForSeconds(number);
+        Destroy(gameObject);
+    }
+
     public void SpawnUnit(Hero hero)
     {
         GameObject _gameObject = Instantiate(hero.playerHero.template.overwriteGameObject) as GameObject;
@@ -193,17 +231,17 @@ public class BattleManager : UIPanel
         }
     }
 
-    public void GetSetPrepHero(int id, int x, int y)
+    public void GetSetPrepHero(int id, int x, int y, JToken stats)
     {
         if (battleMap.IsInMap(x, y))
         {
             var hero = Client.Instance.me.heroes.Find(h => h.id == id);
-            SpawnCharacter(hero, x, y, TeamID.BLUE);
+            SpawnCharacter(hero, x, y, TeamID.BLUE, stats);
             Debug.LogError($"Spawn: {hero.template.name} at Level {hero.level}");
         }
     }
 
-    public void SpawnCharacter(PlayerHero hero, int _x, int _y, TeamID team = TeamID.BLUE)
+    public void SpawnCharacter(PlayerHero hero, int _x, int _y, TeamID team, JToken stats)
     {
         GameObject instance;
         if (hero.template.overwriteGameObject != null)
@@ -220,6 +258,13 @@ public class BattleManager : UIPanel
         }
 
         unit.hero = new Hero(hero);
+        unit.hero.Stats = new Stats()
+        {
+            health = Convert.ToInt32(stats["health"]),
+            attack = Convert.ToInt32(stats["attack"]),
+            shield = Convert.ToInt32(stats["shield"]),
+            movement = Convert.ToInt32(stats["movement"]),
+        };
         unit.SetPosition(_x, _y);
         unit.hero.renderObject = instance;
         battleMap.cells[_x, _y].objectOnTile = unit.hero;
@@ -284,6 +329,18 @@ public class BattleManager : UIPanel
     {
         GameObject.Find($"UI/Header/Ready{_who}").GetComponentInChildren<Image>().color = Color.blue;
         GameObject.Find($"UI/Header/Ready{_who}").GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Ready";
+    }
+
+    void ShowLPBars()
+    {
+        hpBarLeft.SetActive(true);
+        hpBarRight.SetActive(true);
+    }
+
+    void HideLPBars()
+    {
+        hpBarLeft.SetActive(false);
+        hpBarRight.SetActive(false);
     }
 
     void HideReadyText()
@@ -355,6 +412,11 @@ public class BattleManager : UIPanel
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().hero = selectedHero.hero.playerHero;
             actionBar.transform.Find("SelectedHeroInfo/Avatar/HeroListItem").GetComponent<PrepHeroItem>().SetupImagesByHeroData(selectedHero.hero.playerHero.template);
             actionBar.transform.Find("SelectedHeroInfo/Name").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.playerHero.template.name;
+            actionBar.transform.Find("SelectedHeroInfo/Stats/LvlLbl").GetComponent<TMPro.TextMeshProUGUI>().text = "Lv. " + selectedHero.hero.playerHero.level.ToString();
+            actionBar.transform.Find("SelectedHeroInfo/Stats/HP/Value/Text").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.Stats.health.ToString();
+            actionBar.transform.Find("SelectedHeroInfo/Stats/Attack/Value/Text").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.Stats.attack.ToString();
+            actionBar.transform.Find("SelectedHeroInfo/Stats/Shield/Value/Text").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.Stats.shield.ToString();
+            actionBar.transform.Find("SelectedHeroInfo/Stats/Movement/Value/Text").GetComponent<TMPro.TextMeshProUGUI>().text = selectedHero.hero.Stats.movement.ToString();
             int i = 1;
             foreach (var spell in selectedHero.hero.playerHero.spellData)
             {
@@ -428,12 +490,14 @@ public class BattleManager : UIPanel
                                 }
                                 battleMap.ClearColor();
                                 selectedHero = null;
+                                currentState = TileObjState.None;
                                 actionBar.SetActive(false);
                             //}
                         } else
                         {
                             battleMap.ClearColor();
                             selectedHero = null;
+                            currentState = TileObjState.None;
                             actionBar.SetActive(false);
                         }
                     }

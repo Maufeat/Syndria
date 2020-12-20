@@ -35,10 +35,12 @@ public class MessageBox : UIPanel
                 cancelButton.GetComponent<Button>().onClick.AddListener(actionTwo);
             else
                 cancelButton.GetComponent<Button>().onClick.AddListener(delegate { UIManager.Instance.ClosePanel(this); });
-        } catch(Exception e) { Debug.Log(e.Message); }
+        
         
         boxTxt = GameObject.Find("Context").GetComponent<TMPro.TextMeshProUGUI>();
         boxTxt.text = context;
+        }
+        catch (Exception e) { Debug.Log(e.Message); }
 
         UIManager.Instance.OpenPanel(this);
 

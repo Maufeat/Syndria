@@ -100,7 +100,7 @@ public class PrepHeroItem : MonoBehaviour, IDragHandler, IEndDragHandler
         {
             if (!BattleManager.Instance.started)
             {
-                SetDisabled(true);
+                //SetDisabled(true);
             }
         }
     }

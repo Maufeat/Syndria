@@ -25,7 +25,7 @@ public class Heroes : UIPanel
     public TextMeshProUGUI selectedHeroMovement;
     public TextMeshProUGUI selectedHeroDamage;
     public TextMeshProUGUI selectedHeroRange;
-
+    public GameObject selectedHeroSpells;
     public GameObject selectedHeroRenderHolder;
     public GameObject selectedHeroRender;
 
@@ -80,6 +80,21 @@ public class Heroes : UIPanel
         selectedHeroRarity.sprite = Resources.Load<Sprite>($"Images/Rarity/{(int)hero.template.rarity}");        selectedHeroType.sprite = Resources.Load<Sprite>($"Images/Type/{(int)hero.template.type}");
         selectedHeroLevel.text = $"Lv. { hero.level }";
         //selectedHeroPower.text = $"Power: 9000";
+        int i = 0;
+        foreach(Transform spells in selectedHeroSpells.transform)
+        {
+            if (hero.spellData[i] != null)
+            {
+                spells.gameObject.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    Debug.LogError("clicked Spell");
+                });
+                spells.Find("Mask/Image").GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                spells.Find("Mask/Image").GetComponent<Image>().sprite = hero.spellData[i].sprite;
+            }
+
+            i++;
+        }
         //Resources.Load<Sprite>($"Images/Rarity/{(int)_heroData.BaseRarity}");
     }
         

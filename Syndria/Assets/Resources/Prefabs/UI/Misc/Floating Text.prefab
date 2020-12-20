@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0.064}
-  m_SizeDelta: {x: 200, y: 44.864807}
+  m_SizeDelta: {x: 100, y: 44.864807}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7766485552462467886
 CanvasRenderer:
@@ -64,10 +64,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '- 2000000'
+  m_text: '- 2'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3a298e4fdccda5642a879cf287c8d2c6, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: a79353ba22c3bd54d8a255cb32bb9511, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: ddfb2c0c13059c1418f27aa8fadc0821, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -98,8 +98,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 3
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -228,9 +228,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b7fe0e2b8b3f644396bb7c0ef22c65f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifespan: 5
+  lifespan: 2
   text: 222
   textMesh: {fileID: 7766485552462467885}
+  positiveMaterial: {fileID: 2100000, guid: ddfb2c0c13059c1418f27aa8fadc0821, type: 2}
+  negativeMaterial: {fileID: 2100000, guid: a79353ba22c3bd54d8a255cb32bb9511, type: 2}
 --- !u!95 &1562679918352625437
 Animator:
   serializedVersion: 3

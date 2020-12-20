@@ -197,7 +197,7 @@ public class FieldHero : MonoBehaviour
         BattleManager.Instance.battleMap.ClearColor();
         BattleManager.Instance.currentState = TileObjState.Moving;
         BattleManager.Instance.selectedHero = this;
-        var adTiles = GetWalkableTiles(hero.playerHero.template.movement);
+        var adTiles = GetWalkableTiles(hero.Stats.movement);
         var coords = new List<Vector2Int>();
         foreach (Tile tile in adTiles)
         {

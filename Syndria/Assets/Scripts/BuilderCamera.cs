@@ -15,7 +15,6 @@ public class BuilderCamera : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         startPos = transform.position;
         hitPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        canvasRect = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
     }
 
     public void OnDrag(PointerEventData data)
@@ -29,7 +28,7 @@ public class BuilderCamera : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void Start()
     {
-        canvasRect = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
+        canvasRect = GameObject.Find("UIRoot").GetComponent<RectTransform>();
         builderRect = transform.GetComponent<RectTransform>();
     }
 

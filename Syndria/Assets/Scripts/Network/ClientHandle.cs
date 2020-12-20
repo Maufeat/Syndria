@@ -50,6 +50,7 @@ public class ClientHandle : MonoBehaviour
                 owner_id = Convert.ToInt32(hero["owner_id"]),
                 level = Convert.ToInt32(hero["level"]),
                 xp = Convert.ToInt32(hero["xp"]),
+                aptitude = Convert.ToInt32(hero["aptitude"]),
                 hat = Convert.ToInt32(hero["hat"]),
                 cape = Convert.ToInt32(hero["cape"]),
                 amulett = Convert.ToInt32(hero["amulett"]),
@@ -85,20 +86,22 @@ public class ClientHandle : MonoBehaviour
             var _id = Convert.ToInt32(packetData["hero_id"]);
             var _location_x = Convert.ToInt32(packetData["x"]);
             var _location_y = Convert.ToInt32(packetData["y"]);
+            var _stats = packetData["stats"];
 
-            BattleManager.Instance.GetSetPrepHero(_id, _location_x, _location_y);
+            BattleManager.Instance.GetSetPrepHero(_id, _location_x, _location_y, _stats);
         }
     }
 
     public static void UpdateUserData(string _packet)
     {
         var dynamicShit = JObject.Parse(_packet)["account"];
-        var newPlayer = new Player() { 
+        var newPlayer = new Player() {
             id = Convert.ToInt32(dynamicShit["id"]),
             google_id = Convert.ToString(dynamicShit["google_id"]),
             nickname = Convert.ToString(dynamicShit["nickname"]),
             level = Convert.ToInt32(dynamicShit["level"]),
-            exp = Convert.ToInt32(dynamicShit["xp"])
+            exp = Convert.ToInt32(dynamicShit["xp"]),
+            profile_picture_id = Convert.ToInt32(dynamicShit["profile_picture_id"])
         };
         Client.Instance.me = newPlayer;
         Debug.Log(Client.Instance.me.nickname);
@@ -123,6 +126,23 @@ public class ClientHandle : MonoBehaviour
             Client.Instance.me.experienceTable[i] = Convert.ToInt32(xp);
             Debug.LogError($"Added {Client.Instance.me.experienceTable[i]} exp tables");
             i++;
+        }
+    }
+
+    public static void UpdateInventory(string _packet)
+    {
+        var packet = JObject.Parse(_packet);
+        Debug.Log(_packet);
+        Client.Instance.me.items = new List<ItemData>();
+        foreach(var item in packet["items"])
+        {
+            Debug.Log("Add: " + item);
+            var x = Resources.Load<ItemData>($"Items/{item["id"]}");
+            if (x != null)
+            {
+                x.qty = Convert.ToInt32(item["quantity"]);
+                Client.Instance.me.items.Add(x);
+            }
         }
     }
 
@@ -208,14 +228,23 @@ public class ClientHandle : MonoBehaviour
                 }
             };
 
+            var stats = new Stats()
+            {
+                health = Convert.ToInt32(packet["hero_info"]["stats"]["health"]),
+                attack = Convert.ToInt32(packet["hero_info"]["stats"]["attack"]),
+                shield = Convert.ToInt32(packet["hero_info"]["stats"]["shield"]),
+                movement = Convert.ToInt32(packet["hero_info"]["stats"]["movement"]),
+            };
+
             var unit = new Hero()
             {
                 ID = Convert.ToInt32(packet["hero_info"]["id"]),
                 playerHero = playerHero,
                 Team = TeamID.RED,
+                Stats = stats,
                 location = new Vector2Int(Convert.ToInt32(packet["x"]), Convert.ToInt32(packet["y"]))
             };
-
+            Debug.Log(unit.ID + " - " + unit.playerHero.id);
             BattleManager.Instance.SpawnUnit(unit);
         }
     }
@@ -256,6 +285,17 @@ public class ClientHandle : MonoBehaviour
             }
             BattleManager.Instance.battleMap.WalkingTiles(colorTiles);
         }
+    }
+
+    public static void ActionResponse(string _packet)
+    {
+        Debug.LogError(_packet);
+
+        if (BattleManager.Instance == null)
+            return;
+
+        var actionResponse = JObject.Parse(_packet);
+        BattleManager.Instance.OnActionResponse(Convert.ToInt32(actionResponse["targetId"]), Convert.ToInt32(actionResponse["action"]), Convert.ToInt32(actionResponse["value"]));
     }
 
     public static void Attack(string _packet)

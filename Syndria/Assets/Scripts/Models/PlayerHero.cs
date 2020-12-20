@@ -8,6 +8,7 @@ public class PlayerHero
     public HeroTemplate template;
     public int level;
     public int xp;
+    public int aptitude;
     public int hat;
     public int cape;
     public int amulett;

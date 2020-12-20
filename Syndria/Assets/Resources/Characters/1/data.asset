@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: data
   m_EditorClassIdentifier: Assembly-CSharp::HeroTemplate
   id: 1
-  name: Boruto
+  name: Ozai
   type: 1
-  rarity: 1
+  rarity: 2
   health: 50
   strength: 0
   inteligence: 0

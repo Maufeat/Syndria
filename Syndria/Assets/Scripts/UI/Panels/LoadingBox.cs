@@ -3,27 +3,17 @@ using UnityEngine;
 
 public class LoadingBox : UIPanel
 {
-    private TMPro.TextMeshProUGUI loadingDescription;
-    private TMPro.TextMeshProUGUI loadingTxt;
-    public string context = "";
+    public TMPro.TextMeshProUGUI loadingDescription;
+    public TMPro.TextMeshProUGUI loadingTxt;
 
     public void Start()
     {
-        loadingDescription = GameObject.Find("LoadingDescription").GetComponent<TMPro.TextMeshProUGUI>();
-        loadingTxt = GameObject.Find("LoadingText").GetComponent<TMPro.TextMeshProUGUI>();
-        loadingDescription.text = context;
-
-        UIManager.Instance.currentLoadingBox = this;
-
         StartCoroutine(this.Pulse());
     }
 
     public void SetText(string txt)
     {
-        if (UIManager.Instance.currentLoadingBox != null)
-            loadingDescription.text = txt;
-        else
-            context = txt;
+        loadingDescription.text = txt;
     }
 
     IEnumerator Pulse()

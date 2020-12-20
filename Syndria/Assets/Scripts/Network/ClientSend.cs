@@ -20,6 +20,15 @@ public class ClientSend : MonoBehaviour
         Debug.Log($"Set Figure ID {hero.ID} to {hero.location.x}/{hero.location.y}");
     }
 
+    public static void UseItem(int id, int qty)
+    {
+        JObject useItem = new JObject();
+        useItem["msgHeader"] = "UseItem";
+        useItem["id"] = id;
+        useItem["qty"] = qty;
+        SendData(JsonConvert.SerializeObject(useItem));
+    }
+
     public static void DeleteFormation()
     {
         JObject formation = new JObject();
@@ -60,7 +69,9 @@ public class ClientSend : MonoBehaviour
 
     public static void Test()
     {
-        SendData("TEST|TEST");
+        JObject test = new JObject();
+        test["msgHeader"] = "TEST";
+        SendData(JsonConvert.SerializeObject(test));
     }
 
     public static void SendCreateCharacter(int heroId, string nickname)

@@ -32,6 +32,7 @@ class AudioManager : MonoBehaviour
     private AudioSource sfxSource;
 
     private bool sourceOneIsPlaying;
+
     #endregion
 
     private void Awake()
@@ -93,7 +94,7 @@ class AudioManager : MonoBehaviour
 
         for (t = 0; t < transitionTime; t += Time.deltaTime)
         {
-            activeSource.volume = (1 - (t / transitionTime));
+            activeSource.volume = (PlayerPrefs.GetFloat("music_volume") - (t / transitionTime));
             yield return null;
         }
 
@@ -103,6 +104,8 @@ class AudioManager : MonoBehaviour
 
         for (t = 0; t < transitionTime; t += Time.deltaTime)
         {
+            if ((t / transitionTime) >= PlayerPrefs.GetFloat("music_volume"))
+                continue;
             activeSource.volume = ((t / transitionTime));
             yield return null;
         }
@@ -110,6 +113,7 @@ class AudioManager : MonoBehaviour
 
     public void SetMusicVolume(float volume)
     {
+        PlayerPrefs.SetFloat("music_volume", volume);
         musicSource.volume = volume;
         musicSource2.volume = volume;
     }

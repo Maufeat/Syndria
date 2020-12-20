@@ -15,7 +15,8 @@ public class HeroSelectListItem : MonoBehaviour
     {
         playerHero = hero;
         //heroName.color = MathExt.getColorByRarity(hero.baseHeroData.BaseRarity);
-        heroLevel.text = $"{ hero.level }";
-        powerLevel.text = "69420";
+        heroName.text = hero.template.name;
+        heroLevel.text = $"Lv. { hero.level }";
+        powerLevel.text = "Power: 910";
     }
 }

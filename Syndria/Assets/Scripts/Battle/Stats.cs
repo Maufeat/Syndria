@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct Stats
+public class Stats
 {
     public int health;
-    public int movementPoints;
     public int attack;
-    public int spAttack;
-    public int defence;
-    public int spDefence;
+    public int shield;
+    public int movement;
 
 }

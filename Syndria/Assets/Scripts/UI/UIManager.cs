@@ -6,8 +6,6 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    public GameObject uiLogin;
-
     public GameObject mainLayer;
     public GameObject chatLayer;
     public GameObject popLayer;
@@ -16,7 +14,7 @@ public class UIManager : MonoBehaviour
 
     public List<UIPanel> openPanels = new List<UIPanel>();
 
-    public LoadingBox currentLoadingBox;
+    public GameObject currentLoadingBox;
 
     private void Awake()
     {
@@ -57,18 +55,16 @@ public class UIManager : MonoBehaviour
         return obj;
     }
 
-    public LoadingBox OpenLoadingBox(string txt)
+    public void OpenLoadingBox(string txt)
     {
         if(currentLoadingBox != null)
         {
-            currentLoadingBox.SetText(txt);
-            return currentLoadingBox;
+            currentLoadingBox.GetComponent<LoadingBox>().SetText(txt);
         } else
         {
             var panel = Resources.Load("Prefabs/UI/Loading") as GameObject;
-            panel.GetComponent<LoadingBox>().SetText(txt);
-            var obj = Instantiate(panel, popLayer.transform);
-            return null;
+            currentLoadingBox = Instantiate(panel, popLayer.transform);
+            currentLoadingBox.GetComponent<LoadingBox>().SetText(txt);
         }
     }
 
@@ -84,7 +80,7 @@ public class UIManager : MonoBehaviour
     {
         if (currentLoadingBox != null)
         {
-            currentLoadingBox.Close();
+            currentLoadingBox.GetComponent<LoadingBox>().Close();
             currentLoadingBox = null;
         }
     }
